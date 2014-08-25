@@ -1,0 +1,41 @@
+{
+  "name": "hubot-help",
+  "description": "A hubot script to show available hubot commands",
+  "version": "0.1.0",
+  "author": "Josh Nichols <josh@technicalpickles.com>",
+  "license": "MIT",
+
+  "keywords": ["hubot","hubot-scripts"],
+
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hubot-scripts/hubot-help.git"
+  },
+
+  "bugs": {
+    "url": "https://github.com/hubot-scripts/hubot-help/issues"
+  },
+
+  "peerDependencies": {
+    "hubot": "2.x"
+  },
+
+  "devDependencies": {
+    "mocha": "*",
+    "chai": "*",
+    "sinon-chai": "*",
+    "sinon": "*",
+    "grunt-mocha-test": "~0.7.0",
+    "grunt-release": "~0.6.0",
+    "matchdep": "~0.1.2",
+    "grunt-contrib-watch": "~0.5.3",
+    "hubot-mock-adapter": "~1.0.0",
+    "hubot": "2.x"
+  },
+
+  "main": "index.coffee",
+
+  "scripts": {
+    "test": "grunt test"
+  }
+}
