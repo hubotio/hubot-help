@@ -70,8 +70,11 @@ module.exports = (robot) ->
       cmd.replace new RegExp("^#{robot.name}"), prefix
 
     emit = cmds.join "\n"
-
-    msg.send emit
+    
+    if msg.sendPrivate
+      msg.sendPrivate emit
+    else
+      msg.send emit
 
   robot.router.get "/#{robot.name}/help", (req, res) ->
     cmds = robot.helpCommands().map (cmd) ->
