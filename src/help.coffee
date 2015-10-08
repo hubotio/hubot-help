@@ -53,7 +53,23 @@ helpContents = (name, commands) ->
   """
 
 module.exports = (robot) ->
+
   robot.respond /help\s+(.*)?$/i, (msg) ->
+    robot.emit 'help:lookup', msg
+
+  robot.router.get "/#{robot.name}/help", (req, res) ->
+    cmds = renamedHelpCommands(robot).map (cmd) ->
+      cmd.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+
+    emit = "<p>#{cmds.join '</p><p>'}</p>"
+
+    emit = emit.replace new RegExp("#{robot.name}", "ig"), "<b>#{robot.name}</b>"
+
+    res.setHeader 'content-type', 'text/html'
+    res.end helpContents robot.name, emit
+
+  robot.on 'help:lookup', (msg) ->
+
     cmds = renamedHelpCommands(robot)
     filter = msg.match[1]
 
@@ -67,17 +83,6 @@ module.exports = (robot) ->
     emit = cmds.join "\n"
 
     msg.send emit
-
-  robot.router.get "/#{robot.name}/help", (req, res) ->
-    cmds = renamedHelpCommands(robot).map (cmd) ->
-      cmd.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-
-    emit = "<p>#{cmds.join '</p><p>'}</p>"
-
-    emit = emit.replace new RegExp("#{robot.name}", "ig"), "<b>#{robot.name}</b>"
-
-    res.setHeader 'content-type', 'text/html'
-    res.end helpContents robot.name, emit
 
 renamedHelpCommands = (robot) ->
   robot_name = robot.alias or robot.name
