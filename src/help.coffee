@@ -53,7 +53,8 @@ helpContents = (name, commands) ->
   """
 
 module.exports = (robot) ->
-  robot.respond /help\s*(.*)?$/i, (msg) ->
+
+  robot.respond /help\s+(.*)?$/i, (msg) ->
     robot.emit 'help:lookup', msg
 
   robot.router.get "/#{robot.name}/help", (req, res) ->
@@ -68,6 +69,7 @@ module.exports = (robot) ->
     res.end helpContents robot.name, emit
 
   robot.on 'help:lookup', (msg) ->
+
     cmds = renamedHelpCommands(robot)
     filter = msg.match[1]
 
