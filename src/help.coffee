@@ -53,7 +53,7 @@ helpContents = (name, commands) ->
   """
 
 module.exports = (robot) ->
-  robot.respond /help(?:\s+(.*))?$/i, (msg) ->
+  robot.respond /help(?:\s+(.*))?$/i, id:'hubot-help.help', (msg) ->
     cmds = renamedHelpCommands(robot)
     filter = msg.match[1]
 
