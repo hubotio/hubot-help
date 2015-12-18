@@ -80,7 +80,7 @@ module.exports = (robot) ->
     res.end helpContents robot.name, emit
 
 renamedHelpCommands = (robot) ->
-  robot_name = robot.alias or "#{robot.name} "
+  robot_name = robot.alias or robot.name
   help_commands = robot.helpCommands().map (command) ->
-    command.replace /^hubot /i, robot_name
+    command.replace /^hubot/i, robot_name
   help_commands.sort()
