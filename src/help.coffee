@@ -64,9 +64,7 @@ module.exports = (robot) ->
         msg.send "No available commands match #{filter}"
         return
 
-    emit = cmds.join "\n"
-
-    if (msg.envelope.room is not
+    else if (msg.envelope.room is not
         msg.envelope.user.name and
         cmds.length > 20)
       response = "Woah there, there are a lot of help commands." +
@@ -76,6 +74,8 @@ module.exports = (robot) ->
 
       msg.send response
       return
+
+    emit = cmds.join "\n"
 
     msg.send emit
 
