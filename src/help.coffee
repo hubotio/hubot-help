@@ -64,6 +64,17 @@ module.exports = (robot) ->
         msg.send "No available commands match #{filter}"
         return
 
+    else if (msg.envelope.room is not
+        msg.envelope.user.name and
+        cmds.length > 20)
+      response = "Woah there, there are a lot of help commands." +
+      " Can you be more specific by trying '" + robot.name +
+      " help <topic>' instead? Or if you want all the help commands," +
+      " try direct messaging me @" + robot.name
+
+      msg.send response
+      return
+
     emit = cmds.join "\n"
 
     msg.send emit
