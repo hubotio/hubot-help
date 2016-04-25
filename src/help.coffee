@@ -67,6 +67,7 @@ module.exports = (robot) ->
     emit = cmds.join "\n"
 
     if msg.message?.user?.name?
+      msg.reply 'replied to you in private!'
       robot.send {room: msg.message?.user?.name}, emit
     else
       msg.reply emit
