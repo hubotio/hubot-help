@@ -8,6 +8,9 @@
 # URLS:
 #   /hubot/help
 #
+# Configuration:
+#   HUBOT_HELP_REPLY_IN_PRIVATE
+#
 # Notes:
 #   These commands are grabbed from comment blocks at the top of each file.
 
@@ -53,6 +56,8 @@ helpContents = (name, commands) ->
   """
 
 module.exports = (robot) ->
+  replyInPrivate = process.env.HUBOT_HELP_REPLY_IN_PRIVATE
+
   robot.respond /help(?:\s+(.*))?$/i, (msg) ->
     cmds = renamedHelpCommands(robot)
     filter = msg.match[1]
@@ -66,7 +71,11 @@ module.exports = (robot) ->
 
     emit = cmds.join "\n"
 
-    msg.send emit
+    if replyInPrivate and msg.message?.user?.name?
+      msg.reply 'replied to you in private!'
+      robot.send {room: msg.message?.user?.name}, emit
+    else
+      msg.reply emit
 
   robot.router.get "/#{robot.name}/help", (req, res) ->
     cmds = renamedHelpCommands(robot).map (cmd) ->
