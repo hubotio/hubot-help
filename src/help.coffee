@@ -75,7 +75,7 @@ module.exports = (robot) ->
       msg.reply 'replied to you in private!'
       robot.send {room: msg.message?.user?.name}, emit
     else
-      msg.reply emit
+      msg.reply "\n" + emit
 
   robot.router.get "/#{robot.name}/help", (req, res) ->
     cmds = renamedHelpCommands(robot).map (cmd) ->
