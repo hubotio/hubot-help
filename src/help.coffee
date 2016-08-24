@@ -71,8 +71,8 @@ module.exports = (robot) ->
 
     emit = cmds.join "\n"
 
-    if replyInPrivate and msg.message?.user?.name?
-      msg.send true, emit
+    if replyInPrivate
+      msg.reply "Please ask me in a direct message!"
     else
       msg.reply emit
 
