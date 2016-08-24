@@ -72,7 +72,7 @@ module.exports = (robot) ->
     emit = cmds.join "\n"
 
     if replyInPrivate and msg.message?.user?.name?
-      msg.send emit, true
+      msg.send true, emit
     else
       msg.reply emit
 
