@@ -9,7 +9,7 @@
 #   /hubot/help
 #
 # Configuration:
-#   HUBOT_HELP_REPLY_IN_PRIVATE
+#   HUBOT_HELP_REPLY_IN_PRIVATE=true
 #
 # Notes:
 #   These commands are grabbed from comment blocks at the top of each file.
