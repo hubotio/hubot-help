@@ -59,7 +59,7 @@ module.exports = (robot) ->
   replyInPrivate = process.env.HUBOT_HELP_REPLY_IN_PRIVATE
 
   robot.respond /help(?:\s+(.*))?$/i, (msg) ->
-    cmds = renamedHelpCommands(robot)
+    cmds = getHelpCommands(robot)
     filter = msg.match[1]
 
     if filter
@@ -77,19 +77,32 @@ module.exports = (robot) ->
     else
       msg.reply emit
 
-  robot.router.get "/#{robot.name}/help", (req, res) ->
-    cmds = renamedHelpCommands(robot).map (cmd) ->
-      cmd.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  if robot.httpd
+    robot.router.get "/#{robot.name}/help", (req, res) ->
+      cmds = getHelpCommands(robot).map (cmd) ->
+        cmd.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
 
-    emit = "<p>#{cmds.join '</p><p>'}</p>"
+      emit = "<p>#{cmds.join '</p><p>'}</p>"
 
-    emit = emit.replace new RegExp("#{robot.name}", "ig"), "<b>#{robot.name}</b>"
+      emit = emit.replace new RegExp("#{robot.name}", "ig"), "<b>#{robot.name}</b>"
 
-    res.setHeader 'content-type', 'text/html'
-    res.end helpContents robot.name, emit
+      res.setHeader 'content-type', 'text/html'
+      res.end helpContents robot.name, emit
 
-renamedHelpCommands = (robot) ->
+getHelpCommands = (robot) ->
+  help_commands = robot.helpCommands()
+
   robot_name = robot.alias or robot.name
-  help_commands = robot.helpCommands().map (command) ->
+
+  if hiddenCommandsPattern()
+    help_commands = help_commands.filter (command) ->
+      !hiddenCommandsPattern().test(command)
+
+  help_commands = help_commands.map (command) ->
     command.replace /^hubot/i, robot_name
+
   help_commands.sort()
+
+hiddenCommandsPattern = ->
+  hiddenCommands = process.env.HUBOT_HELP_HIDDEN_COMMANDS?.split ","
+  new RegExp "^hubot (?:#{hiddenCommands?.join '|'}) - " if hiddenCommands
