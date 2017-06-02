@@ -2,7 +2,7 @@
 #   Generates help commands for Hubot.
 #
 # Commands:
-#   hubot help - Displays all of the help commands that Hubot knows about.
+#   hubot help - Displays all of the help commands that this bot knows about.
 #   hubot help <query> - Displays all help commands that match <query>.
 #
 # URLS:
@@ -59,7 +59,7 @@ module.exports = (robot) ->
   replyInPrivate = process.env.HUBOT_HELP_REPLY_IN_PRIVATE
 
   robot.respond /help(?:\s+(.*))?$/i, (msg) ->
-    cmds = renamedHelpCommands(robot)
+    cmds = getHelpCommands(robot)
     filter = msg.match[1]
 
     if filter
@@ -75,12 +75,16 @@ module.exports = (robot) ->
       msg.reply 'replied to you in private!'
       robot.send {room: msg.message?.user?.name}, emit
     else
-      msg.reply emit
+      msg.send emit
 
   if !process.env.HUBOT_HELP_DISABLE_HTTP?
     robot.router.get "/#{robot.name}/help", (req, res) ->
       cmds = renamedHelpCommands(robot).map (cmd) ->
         cmd.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      
+      if req.query.q?
+        cmds = cmds.filter (cmd) ->
+          cmd.match new RegExp(req.query.q, 'i')
 
       emit = "<p>#{cmds.join '</p><p>'}</p>"
 
@@ -89,8 +93,20 @@ module.exports = (robot) ->
       res.setHeader 'content-type', 'text/html'
       res.end helpContents robot.name, emit
 
-renamedHelpCommands = (robot) ->
+getHelpCommands = (robot) ->
+  help_commands = robot.helpCommands()
+
   robot_name = robot.alias or robot.name
-  help_commands = robot.helpCommands().map (command) ->
+
+  if hiddenCommandsPattern()
+    help_commands = help_commands.filter (command) ->
+      !hiddenCommandsPattern().test(command)
+
+  help_commands = help_commands.map (command) ->
     command.replace /^hubot/i, robot_name
+
   help_commands.sort()
+
+hiddenCommandsPattern = ->
+  hiddenCommands = process.env.HUBOT_HELP_HIDDEN_COMMANDS?.split ","
+  new RegExp "^hubot (?:#{hiddenCommands?.join '|'}) - " if hiddenCommands
