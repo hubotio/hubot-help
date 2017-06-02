@@ -78,15 +78,18 @@ module.exports = (robot) ->
       msg.reply emit
 
   robot.router.get "/#{robot.name}/help", (req, res) ->
-    cmds = renamedHelpCommands(robot).map (cmd) ->
-      cmd.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    if process.env.HUBOT_HELP_DISABLE_HTTP?
+      res.status(403).end("403 Access Denied / Forbidden")
+    else
+      cmds = renamedHelpCommands(robot).map (cmd) ->
+        cmd.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
 
-    emit = "<p>#{cmds.join '</p><p>'}</p>"
+      emit = "<p>#{cmds.join '</p><p>'}</p>"
 
-    emit = emit.replace new RegExp("#{robot.name}", "ig"), "<b>#{robot.name}</b>"
+      emit = emit.replace new RegExp("#{robot.name}", "ig"), "<b>#{robot.name}</b>"
 
-    res.setHeader 'content-type', 'text/html'
-    res.end helpContents robot.name, emit
+      res.setHeader 'content-type', 'text/html'
+      res.end helpContents robot.name, emit
 
 renamedHelpCommands = (robot) ->
   robot_name = robot.alias or robot.name
