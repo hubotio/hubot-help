@@ -81,6 +81,10 @@ module.exports = (robot) ->
     cmds = renamedHelpCommands(robot).map (cmd) ->
       cmd.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
 
+    if req.query.q?
+      cmds = cmds.filter (cmd) ->
+        cmd.match new RegExp(req.query.q, 'i')
+
     emit = "<p>#{cmds.join '</p><p>'}</p>"
 
     emit = emit.replace new RegExp("#{robot.name}", "ig"), "<b>#{robot.name}</b>"
