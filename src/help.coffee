@@ -9,7 +9,9 @@
 #   /hubot/help
 #
 # Configuration:
-#   HUBOT_HELP_REPLY_IN_PRIVATE
+#   HUBOT_HELP_REPLY_IN_PRIVATE - Reply in private to `help`
+#   HUBOT_HELP_PRIVATE_MSG      - Message to inform user that hubot replied in public
+#   HUBOT_HELP_USE_ID           - Reply to user id instead of user name
 #
 # Notes:
 #   These commands are grabbed from comment blocks at the top of each file.
@@ -56,9 +58,11 @@ helpContents = (name, commands) ->
   """
 
 module.exports = (robot) ->
-  replyInPrivate = process.env.HUBOT_HELP_REPLY_IN_PRIVATE
+  replyInPrivate      = process.env.HUBOT_HELP_REPLY_IN_PRIVATE
+  privateNotifMessage = process.env.HUBOT_HELP_PRIVATE_MSG || 'replied to you in private!'
+  useId               = process.env.HUBOT_HELP_USE_ID
 
-  robot.respond /help(?:\s+(.*))?$/i, (msg) ->
+  robot.respond /help(?:\s+(.*))?$/i, id: "hubot.help", (msg) ->
     cmds = renamedHelpCommands(robot)
     filter = msg.match[1]
 
@@ -71,9 +75,13 @@ module.exports = (robot) ->
 
     emit = cmds.join "\n"
 
-    if replyInPrivate and msg.message?.user?.name?
-      msg.reply 'replied to you in private!'
-      robot.send {room: msg.message?.user?.name}, emit
+    if replyInPrivate and (msg.message?.user?.name? || msg.message?.user?.id?)
+      if(msg.message?.user?.name != msg.room && msg.message?.user?.id != msg.room)
+        msg.reply privateNotifMessage
+      if useId && msg.message?.user?.id?
+        robot.send {room: msg.message?.user?.id}, emit
+      else
+        robot.send {room: msg.message?.user?.name}, emit
     else
       msg.send emit
 
