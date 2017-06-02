@@ -20,7 +20,7 @@ Then add **hubot-help** to your `external-scripts.json`:
 
 ```
 user1>> hubot help
-hubot>> hubot help - Displays all of the help commands that Hubot knows about.
+hubot>> hubot help - Displays all of the help commands that this bot knows about.
 hubot>> hubot help <query> - Displays all help commands that match <query>.
 
 ```

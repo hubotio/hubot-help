@@ -2,7 +2,7 @@
 #   Generates help commands for Hubot.
 #
 # Commands:
-#   hubot help - Displays all of the help commands that Hubot knows about.
+#   hubot help - Displays all of the help commands that this bot knows about.
 #   hubot help <query> - Displays all help commands that match <query>.
 #
 # URLS:
@@ -75,12 +75,16 @@ module.exports = (robot) ->
       msg.reply 'replied to you in private!'
       robot.send {room: msg.message?.user?.name}, emit
     else
-      msg.reply emit
+      msg.send emit
 
   if robot.httpd
     robot.router.get "/#{robot.name}/help", (req, res) ->
       cmds = getHelpCommands(robot).map (cmd) ->
         cmd.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+
+      if req.query.q?
+        cmds = cmds.filter (cmd) ->
+          cmd.match new RegExp(req.query.q, 'i')
 
       emit = "<p>#{cmds.join '</p><p>'}</p>"
 
