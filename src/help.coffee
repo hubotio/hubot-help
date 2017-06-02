@@ -71,9 +71,8 @@ module.exports = (robot) ->
 
     emit = cmds.join "\n"
 
-    if replyInPrivate and msg.message?.user?.name?
-      msg.reply 'replied to you in private!'
-      robot.send {room: msg.message?.user?.name}, emit
+    if replyInPrivate and not filter
+      msg.reply "Please ask me in a direct message!"
     else
       msg.send emit
 
@@ -91,5 +90,5 @@ module.exports = (robot) ->
 renamedHelpCommands = (robot) ->
   robot_name = robot.alias or robot.name
   help_commands = robot.helpCommands().map (command) ->
-    command.replace /^hubot/i, robot_name
+    command.replace /hubot/ig, robot_name
   help_commands.sort()
