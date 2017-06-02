@@ -77,10 +77,8 @@ module.exports = (robot) ->
     else
       msg.reply emit
 
-  robot.router.get "/#{robot.name}/help", (req, res) ->
-    if process.env.HUBOT_HELP_DISABLE_HTTP?
-      res.status(403).end("403 Access Denied / Forbidden")
-    else
+  if !process.env.HUBOT_HELP_DISABLE_HTTP?
+    robot.router.get "/#{robot.name}/help", (req, res) ->
       cmds = renamedHelpCommands(robot).map (cmd) ->
         cmd.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
 
