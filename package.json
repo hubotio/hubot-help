@@ -19,15 +19,15 @@
     "hubot": "2.x"
   },
   "devDependencies": {
-    "mocha": "*",
-    "chai": "*",
-    "sinon-chai": "*",
-    "sinon": "*",
+    "mocha": "~3.0.2",
+    "chai": "~3.5.0",
+    "sinon-chai": "~2.8.0",
+    "sinon": "~1.4.2",
     "grunt": "~1.0.1",
     "grunt-mocha-test": "~0.7.0",
-    "grunt-release": "~0.6.0",
+    "grunt-release": "~0.14.0",
     "matchdep": "~0.1.2",
-    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-watch": "~1.0.0",
     "hubot-mock-adapter": "~1.0.0",
     "hubot": "2.x"
   },
