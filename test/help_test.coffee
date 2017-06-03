@@ -36,7 +36,7 @@ describe "help", ->
 
     context "when HUBOT_HELP_HIDDEN_COMMANDS is not set", ->
       it "lists all commands", (done) ->
-        @robot.adapter.on "reply", (envelope, strings) ->
+        @robot.adapter.on "send", (envelope, strings) ->
           commands = strings[0].split "\n"
 
           expect(commands.length).to.eql(2)
@@ -49,7 +49,7 @@ describe "help", ->
     context "when HUBOT_HELP_HIDDEN_COMMANDS is set", ->
       it "lists all commands but those in environment variable", (done) ->
         process.env.HUBOT_HELP_HIDDEN_COMMANDS = "help"
-        @robot.adapter.on "reply", (envelope, strings) ->
+        @robot.adapter.on "send", (envelope, strings) ->
           commands = strings[0].split "\n"
 
           expect(commands.length).to.eql(1)
