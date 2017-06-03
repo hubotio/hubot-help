@@ -76,7 +76,7 @@ module.exports = (robot) ->
     if replyInPrivate and msg.message?.user?.name?
       if msg.envelope?.room? # works for irc, not for slack
         msg.reply 'replied to you in private!'
-      target =  if msg.message?.user?.id? # for slack, maybe for rocketchat too
+      target =  if msg.message?.user?.id? # for slack
                   msg.message?.user?.id
                 else # for irc
                   msg.message?.user?.name

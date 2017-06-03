@@ -23,6 +23,7 @@ You can set various environment variables to tune up the behavior of thios help 
 - `HUBOT_HELP_REPLY_IN_PRIVATE` (set to any value) will force calls to `hubot help` to be answered in private
   - Note: it has been tested with `hubot-irc` and `hubot-slack`, it works for both  
     tested with `hubot-gitter2`, it fails to display the help  
+    tested with `hubot-rocketchat`, it fails to display the help  
     (please open issues if you can test on other adapters, to say if it works or not)
 - `HUBOT_HELP_DISABLE_HTTP` (set to any value) will disable the web interface for help
 - `HUBOT_HELP_HIDDEN_COMMANDS` comma-separated list of commands that will not be displayed in help
