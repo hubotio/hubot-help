@@ -10,7 +10,8 @@ Robot       = require "hubot/src/robot"
 TextMessage = require("hubot/src/message").TextMessage
 
 newTestRobot = ->
-  robot = new Robot null, "mock-adapter", false, "hubot"
+  process.env.PORT = '0'
+  robot = new Robot null, "mock-adapter", true, "hubot"
 
   robot.loadFile path.resolve("src/"), "help.coffee"
 
