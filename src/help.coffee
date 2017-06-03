@@ -74,8 +74,13 @@ module.exports = (robot) ->
     emit = cmds.join "\n"
 
     if replyInPrivate and msg.message?.user?.name?
-      msg.reply 'replied to you in private!'
-      robot.send {room: msg.message?.user?.name}, emit
+      if msg.envelope?.room? # works for irc, not for slack
+        msg.reply 'replied to you in private!'
+      target =  if msg.message?.user?.id? # for slack
+                  msg.message?.user?.id
+                else # for irc
+                  msg.message?.user?.name
+      robot.messageRoom target, emit
     else
       msg.send emit
 
