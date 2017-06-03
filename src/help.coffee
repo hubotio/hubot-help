@@ -105,7 +105,10 @@ getHelpCommands = (robot) ->
       !hiddenCommandsPattern().test(command)
 
   help_commands = help_commands.map (command) ->
-    command.replace /^hubot/i, robot_name
+    if robot_name.length is 1
+      command.replace /^hubot\s*/i, robot_name
+    else
+      command.replace /^hubot/i, robot_name
 
   help_commands.sort()
 
