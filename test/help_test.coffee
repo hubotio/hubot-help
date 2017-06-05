@@ -1,10 +1,7 @@
-chai   = require "chai"
-expect = chai.expect
 hubot  = require "hubot"
 path   = require "path"
 sinon  = require "sinon"
-
-chai.use require "sinon-chai"
+expect = require('chai').use(require('sinon-chai')).expect
 
 Robot       = require "hubot/src/robot"
 TextMessage = require("hubot/src/message").TextMessage
@@ -12,16 +9,12 @@ TextMessage = require("hubot/src/message").TextMessage
 newTestRobot = ->
   process.env.PORT = '0'
   robot = new Robot null, "mock-adapter", true, "hubot"
-
   robot.loadFile path.resolve("src/"), "help.coffee"
-
   robot.adapter.on "connected", ->
-
     robot.brain.userForId "1",
       name: "john"
       real_name: "John Doe"
       room: "#test"
-
   robot
 
 describe "help", ->
@@ -35,29 +28,48 @@ describe "help", ->
     afterEach ->
       @robot.shutdown()
 
-    context "when HUBOT_HELP_HIDDEN_COMMANDS is not set", ->
-      it "lists all commands", (done) ->
-        @robot.adapter.on "send", (envelope, strings) ->
-          commands = strings[0].split "\n"
+    context "when no configuration is set", ->
+      context "and all help is requested", ->
+        it "lists all commands", (done) ->
+          @robot.adapter.on "send", (envelope, strings) ->
+            commands = strings[0].split "\n"
+            expect(commands.length).to.eql(2)
+            expect(commands).to.eql(@robot.helpCommands())
+            done()
+          @robot.adapter.receive new TextMessage(@user, "hubot help")
 
-          expect(commands.length).to.eql(2)
-          expect(commands).to.eql(@robot.helpCommands())
+      context "and a filter is set", ->
+        context 'and there is a match', ->
+          it "lists commands matching filter", (done) ->
+            @robot.adapter.on "send", (envelope, strings) ->
+              commands = strings[0].split "\n"
+              expect(commands.length).to.eql(1)
+              expect(commands[0]).to.eql(
+                'hubot help <query> - Displays all help commands that match <query>.'
+              )
+              done()
+            @robot.adapter.receive new TextMessage(@user, "hubot help query")
 
-          done()
+        context "but there is no match", ->
+          it "apologize to user", (done) ->
+            @robot.adapter.on "send", (envelope, strings) ->
+              commands = strings[0].split "\n"
+              expect(commands.length).to.eql(1)
+              expect(commands[0]).to.eql(
+                'No available commands match xxx'
+              )
+              done()
+            @robot.adapter.receive new TextMessage(@user, "hubot help xxx")
 
-        @robot.adapter.receive new TextMessage(@user, "hubot help")
 
     context "when HUBOT_HELP_HIDDEN_COMMANDS is set", ->
-      it "lists all commands but those in environment variable", (done) ->
+      it "only list commands not in HUBOT_HELP_HIDDEN_COMMANDS", (done) ->
         process.env.HUBOT_HELP_HIDDEN_COMMANDS = "help"
         @robot.adapter.on "send", (envelope, strings) ->
           commands = strings[0].split "\n"
-
           expect(commands.length).to.eql(1)
-          expect(commands[0]).to.match(
-            /hubot help <query> - Displays all help commands that match <query>/
+          expect(commands[0]).to.eql(
+            'hubot help <query> - Displays all help commands that match <query>.'
           )
-
           done()
-
         @robot.adapter.receive new TextMessage(@user, "hubot help")

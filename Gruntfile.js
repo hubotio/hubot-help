@@ -4,6 +4,7 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-release');
+  grunt.loadNpmTasks('grunt-coffee-coverage');
 
   grunt.initConfig({
     mochaTest: {

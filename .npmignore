@@ -1,0 +1,11 @@
+.codeclimate.yml
+.travis.yml
+.git
+.gitignore
+.github/
+coverage/
+test/
+npm-debug.log
+coffeelint.json
+coffee-coverage.js
+Gruntfile.js
