@@ -58,7 +58,6 @@ helpContents = (name, commands) ->
   """
 
 module.exports = (robot) ->
-  replyInPrivate = process.env.HUBOT_HELP_REPLY_IN_PRIVATE
 
   robot.respond /help(?:\s+(.*))?$/i, (msg) ->
     cmds = getHelpCommands(robot)
@@ -73,7 +72,7 @@ module.exports = (robot) ->
 
     emit = cmds.join '\n'
 
-    if replyInPrivate and msg.message?.user?.name?
+    if process.env.HUBOT_HELP_REPLY_IN_PRIVATE and msg.message?.user?.name?
       msg.reply 'replied to you in private!'
       robot.send { room: msg.message?.user?.name }, emit
     else
