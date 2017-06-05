@@ -30,7 +30,7 @@
     "grunt-release": "~0.14.0",
     "hubot": "2.x",
     "hubot-mock-adapter": "~1.0.0",
-    "istanbul": "~0.4.4",
+    "istanbul": "~0.4.5",
     "matchdep": "~0.1.2",
     "mocha": "~3.0.2",
     "sinon": "~1.4.2",
