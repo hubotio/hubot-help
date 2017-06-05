@@ -38,7 +38,7 @@
   },
   "main": "index.coffee",
   "scripts": {
-    "test": "mocha && istanbul report text-summary lcov",
-    "posttest": "coffeelint src/*.coffee test/*.coffee index.coffee"
+    "test": "mocha",
+    "posttest": "coffeelint **/*.coffee index.coffee && istanbul report text-summary lcov"
   }
 }
