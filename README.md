@@ -2,7 +2,6 @@ Hubot Help Plugin
 ==================
 
 [![Version](https://img.shields.io/npm/v/hubot-help.svg)](https://www.npmjs.com/package/hubot-help)
-[![Downloads](https://img.shields.io/npm/dt/hubot-help.svg)](https://www.npmjs.com/package/hubot-help)
 [![Build Status](https://img.shields.io/travis/hubotio/hubot-help.svg)](https://travis-ci.org/hubotio/hubot-help)
 
 A hubot script to show available hubot commands
@@ -36,7 +35,7 @@ Development
 
 For tests:
 
-  npm test
+    npm test
 
 
 Sample Interaction
