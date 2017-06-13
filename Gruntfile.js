@@ -1,19 +1,16 @@
-'use strict';
+'use strict'
 
-module.exports = function(grunt) {
-
-  grunt.loadNpmTasks('grunt-mocha-test');
-  grunt.loadNpmTasks('grunt-release');
-  grunt.loadNpmTasks('grunt-coffee-coverage');
+module.exports = function (grunt) {
+  grunt.loadNpmTasks('grunt-mocha-test')
+  grunt.loadNpmTasks('grunt-release')
 
   grunt.initConfig({
     mochaTest: {
       test: {
         options: {
-          reporter: 'dot',
-          require: 'coffee-script'
+          reporter: 'dot'
         },
-        src: ['test/**/*.coffee']
+        src: ['test/**/*.js']
       }
     },
     release: {
@@ -23,19 +20,19 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: ['Gruntfile.js', 'test/**/*.coffee'],
+      files: ['Gruntfile.js', 'test/**/*.js'],
       tasks: ['test']
     }
-  });
+  })
 
-  grunt.event.on('watch', function(action, filepath, target) {
-    grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
-  });
+  grunt.event.on('watch', function (action, filepath, target) {
+    grunt.log.writeln(target + ': ' + filepath + ' has ' + action)
+  })
 
   // load all grunt tasks
-  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks)
 
-  grunt.registerTask('test', ['mochaTest']);
-  grunt.registerTask('test:watch', ['watch']);
-  grunt.registerTask('default', ['test']);
-};
+  grunt.registerTask('test', ['mochaTest'])
+  grunt.registerTask('test:watch', ['watch'])
+  grunt.registerTask('default', ['test'])
+}
