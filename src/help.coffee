@@ -58,7 +58,6 @@ helpContents = (name, commands) ->
   """
 
 module.exports = (robot) ->
-  replyInPrivate = process.env.HUBOT_HELP_REPLY_IN_PRIVATE
 
   robot.respond /help(?:\s+(.*))?$/i, (msg) ->
     cmds = getHelpCommands(robot)
@@ -67,22 +66,22 @@ module.exports = (robot) ->
     if filter
       cmds = cmds.filter (cmd) ->
         cmd.match new RegExp(filter, 'i')
-      if cmds.length == 0
+      if cmds.length is 0
         msg.send "No available commands match #{filter}"
         return
 
-    emit = cmds.join "\n"
+    emit = cmds.join '\n'
 
-    if replyInPrivate and msg.message?.user?.name?
+    if process.env.HUBOT_HELP_REPLY_IN_PRIVATE and msg.message?.user?.name?
       msg.reply 'replied to you in private!'
-      robot.send {room: msg.message?.user?.name}, emit
+      robot.send { room: msg.message?.user?.name }, emit
     else
       msg.send emit
 
-  if !process.env.HUBOT_HELP_DISABLE_HTTP?
+  if not process.env.HUBOT_HELP_DISABLE_HTTP?
     robot.router.get "/#{robot.name}/help", (req, res) ->
       cmds = renamedHelpCommands(robot).map (cmd) ->
-        cmd.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        cmd.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       
       if req.query.q?
         cmds = cmds.filter (cmd) ->
@@ -90,7 +89,7 @@ module.exports = (robot) ->
 
       emit = "<p>#{cmds.join '</p><p>'}</p>"
 
-      emit = emit.replace new RegExp("#{robot.name}", "ig"), "<b>#{robot.name}</b>"
+      emit = emit.replace new RegExp(robot.name, 'ig'), "<b>#{robot.name}</b>"
 
       res.setHeader 'content-type', 'text/html'
       res.end helpContents robot.name, emit
@@ -102,7 +101,7 @@ getHelpCommands = (robot) ->
 
   if hiddenCommandsPattern()
     help_commands = help_commands.filter (command) ->
-      !hiddenCommandsPattern().test(command)
+      not hiddenCommandsPattern().test(command)
 
   help_commands = help_commands.map (command) ->
     if robot_name.length is 1
@@ -113,5 +112,5 @@ getHelpCommands = (robot) ->
   help_commands.sort()
 
 hiddenCommandsPattern = ->
-  hiddenCommands = process.env.HUBOT_HELP_HIDDEN_COMMANDS?.split ","
+  hiddenCommands = process.env.HUBOT_HELP_HIDDEN_COMMANDS?.split ','
   new RegExp "^hubot (?:#{hiddenCommands?.join '|'}) - " if hiddenCommands
