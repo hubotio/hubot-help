@@ -3,13 +3,14 @@ path   = require 'path'
 sinon  = require 'sinon'
 expect = require('chai').use(require('sinon-chai')).expect
 
-Robot       = require 'hubot/src/robot'
-TextMessage = require('hubot/src/message').TextMessage
+Hubot       = require "hubot"
+Robot       = Hubot.Robot
+TextMessage = Hubot.TextMessage
 
 newTestRobot = ->
   process.env.PORT = '0'
   robot = new Robot null, 'mock-adapter', true, 'hubot'
-  robot.loadFile path.resolve('src/'), 'help.coffee'
+  robot.loadFile path.resolve('src/'), 'help'
   robot.adapter.on 'connected', ->
     robot.brain.userForId '1', {
       name: 'john'
