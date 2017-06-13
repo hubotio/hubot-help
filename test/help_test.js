@@ -28,7 +28,7 @@ const newTestRobot = function newTestRobot () {
   return robot
 }
 
-describe('help', () => describe('getHelpCommands', function () {
+describe('help', () => describe('getHelpCommands', () => {
   beforeEach(function () {
     this.robot = newTestRobot()
     this.robot.run()

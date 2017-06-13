@@ -59,10 +59,10 @@ const helpContents = (name, commands) => `\
 </html>\
 `
 
-module.exports = function (robot) {
+module.exports = (robot) => {
   const replyInPrivate = process.env.HUBOT_HELP_REPLY_IN_PRIVATE
 
-  robot.respond(/help(?:\s+(.*))?$/i, function (msg) {
+  robot.respond(/help(?:\s+(.*))?$/i, (msg) => {
     let cmds = getHelpCommands(robot)
     const filter = msg.match[1]
 
@@ -85,7 +85,7 @@ module.exports = function (robot) {
   })
 
   if (process.env.HUBOT_HELP_DISABLE_HTTP == null) {
-    return robot.router.get(`/${robot.name}/help`, function (req, res) {
+    return robot.router.get(`/${robot.name}/help`, (req, res) => {
       let cmds = renamedHelpCommands(robot).map(cmd => cmd.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'))
 
       if (req.query.q != null) {
@@ -97,7 +97,7 @@ module.exports = function (robot) {
       emit = emit.replace(new RegExp(`${robot.name}`, 'ig'), `<b>${robot.name}</b>`)
 
       res.setHeader('content-type', 'text/html')
-      return res.end(helpContents(robot.name, emit))
+      res.end(helpContents(robot.name, emit))
     })
   }
 }
@@ -111,12 +111,12 @@ var getHelpCommands = function getHelpCommands (robot) {
     helpCommands = helpCommands.filter(command => !hiddenCommandsPattern().test(command))
   }
 
-  helpCommands = helpCommands.map(function (command) {
+  helpCommands = helpCommands.map((command) => {
     if (robotName.length === 1) {
       return command.replace(/^hubot\s*/i, robotName)
-    } else {
-      return command.replace(/^hubot/i, robotName)
     }
+
+    return command.replace(/^hubot/i, robotName)
   })
 
   return helpCommands.sort()
