@@ -16,7 +16,7 @@
     "url": "https://github.com/hubot-scripts/hubot-help/issues"
   },
   "peerDependencies": {
-    "hubot": "2.x",
+    "hubot": ">=2 <10",
     "coffee-script": "^1.12.6"
   },
   "devDependencies": {
