@@ -1,8 +1,7 @@
 Hubot Help Plugin
 ==================
 
-[![Version](https://img.shields.io/npm/v/hubot-help.svg)](https://www.npmjs.com/package/hubot-help)
-[![Build Status](https://img.shields.io/travis/hubotio/hubot-help.svg)](https://travis-ci.org/hubotio/hubot-help)
+[![Build Status](https://travis-ci.org/hubotio/hubot-help.svg?branch=master)](https://travis-ci.org/hubotio/hubot-help) [![Coverage Status](https://coveralls.io/repos/github/hubotio/hubot-help/badge.svg?branch=master)](https://coveralls.io/github/hubotio/hubot-help?branch=master)
 
 A hubot script to show available hubot commands
 
