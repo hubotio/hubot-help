@@ -11,6 +11,9 @@
     "hubot",
     "hubot-scripts"
   ],
+  "engines": {
+    "node": ">4"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/hubotio/hubot-help.git"
