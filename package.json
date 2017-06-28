@@ -2,6 +2,9 @@
   "name": "hubot-help",
   "description": "A hubot script to show available hubot commands",
   "version": "0.2.2",
+  "publishConfig": {
+    "tag": "next"
+  },
   "author": "Josh Nichols <josh@technicalpickles.com>",
   "license": "MIT",
   "keywords": [
