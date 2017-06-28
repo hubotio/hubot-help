@@ -1,7 +1,7 @@
 {
   "name": "hubot-help",
   "description": "A hubot script to show available hubot commands",
-  "version": "0.2.2",
+  "version": "0.0.0-development",
   "publishConfig": {
     "tag": "next"
   },
@@ -13,10 +13,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/hubot-scripts/hubot-help.git"
+    "url": "https://github.com/hubotio/hubot-help.git"
   },
   "bugs": {
-    "url": "https://github.com/hubot-scripts/hubot-help/issues"
+    "url": "https://github.com/hubotio/hubot-help/issues"
   },
   "peerDependencies": {
     "hubot": ">=2 <10 || 0.0.0-development",
@@ -36,13 +36,15 @@
     "nyc": "^11.0.3",
     "sinon": "^1.4.2",
     "sinon-chai": "^2.8.0",
-    "standard": "^10.0.2"
+    "standard": "^10.0.2",
+    "semantic-release": "^6.3.6"
   },
   "main": "index.coffee",
   "scripts": {
     "pretest": "standard",
     "test": "nyc --reporter=html --reporter=text mocha",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "files": [
     "index.js",
