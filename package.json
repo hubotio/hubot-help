@@ -12,7 +12,7 @@
     "hubot-scripts"
   ],
   "engines": {
-    "node": ">4"
+    "node": "> 4.0.0"
   },
   "repository": {
     "type": "git",
