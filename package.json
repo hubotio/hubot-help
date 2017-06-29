@@ -22,8 +22,7 @@
     "url": "https://github.com/hubotio/hubot-help/issues"
   },
   "peerDependencies": {
-    "hubot": ">=2 <10 || 0.0.0-development",
-    "coffee-script": "^1.12.6"
+    "hubot": ">=2 <10 || 0.0.0-development"
   },
   "devDependencies": {
     "chai": "^3.5.0",
