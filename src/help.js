@@ -11,7 +11,7 @@
 //   /hubot/help
 //
 // Configuration:
-//   HUBOT_HELP_REPLY_IN_PRIVATE - if set to any avlue, all `hubot help` replies are sent in private
+//   HUBOT_HELP_REPLY_IN_PRIVATE - if set to any value, all `hubot help` replies are sent in private
 //   HUBOT_HELP_DISABLE_HTTP - if set, no web entry point will be declared
 //   HUBOT_HELP_HIDDEN_COMMANDS - comma-separated list of commands that will not be displayed in help
 //
@@ -76,7 +76,7 @@ module.exports = (robot) => {
 
     const emit = cmds.join('\n')
 
-    if (replyInPrivate && msg.message && msg.message.user && msg.message.user.name) {
+    if (replyInPrivate && msg.message && msg.message.user && msg.message.user.name && msg.message.user.name != msg.message.room) {
       msg.reply('replied to you in private!')
       return robot.send({ room: msg.message.user.name }, emit)
     } else {
@@ -113,10 +113,10 @@ var getHelpCommands = function getHelpCommands (robot) {
 
   helpCommands = helpCommands.map((command) => {
     if (robotName.length === 1) {
-      return command.replace(/^hubot\s*/i, robotName)
+      return command.replace(/^hubot\s*/i, '@'+robotName)
     }
 
-    return command.replace(/^hubot/i, robotName)
+    return command.replace(/^hubot/i, '@'+robotName)
   })
 
   return helpCommands.sort()
