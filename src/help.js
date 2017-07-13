@@ -76,7 +76,7 @@ module.exports = (robot) => {
 
     const emit = cmds.join('\n')
 
-    if (replyInPrivate && msg.message && msg.message.user && msg.message.user.name && msg.message.user.name != msg.message.room) {
+    if (replyInPrivate && msg.message && msg.message.user && msg.message.user.name && msg.message.user.name !== msg.message.room) {
       msg.reply('replied to you in private!')
       return robot.send({ room: msg.message.user.name }, emit)
     } else {
@@ -113,10 +113,10 @@ var getHelpCommands = function getHelpCommands (robot) {
 
   helpCommands = helpCommands.map((command) => {
     if (robotName.length === 1) {
-      return command.replace(/^hubot\s*/i, '@'+robotName)
+      return command.replace(/^hubot\s*/i, robotName)
     }
 
-    return command.replace(/^hubot/i, '@'+robotName)
+    return command.replace(/^hubot/i, robotName)
   })
 
   return helpCommands.sort()
