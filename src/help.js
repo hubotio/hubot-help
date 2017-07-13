@@ -76,7 +76,7 @@ module.exports = (robot) => {
 
     const emit = cmds.join('\n')
 
-    if (replyInPrivate && msg.message && msg.message.user && msg.message.user.name) {
+    if (replyInPrivate && msg.message && msg.message.user && msg.message.user.name && msg.message.user.name != msg.message.room) {
       msg.reply('replied to you in private!')
       return robot.send({ room: msg.message.user.name }, emit)
     } else {
