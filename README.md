@@ -5,7 +5,7 @@ Hubot Help Plugin
 
 A hubot script to show available hubot commands
 
-See [`src/help.coffee`](src/help.coffee) for full documentation.
+See [`src/help.js`](src/help.js) for full documentation.
 
 Installation
 -----------------
