@@ -86,7 +86,7 @@ module.exports = (robot) => {
 
   if (process.env.HUBOT_HELP_DISABLE_HTTP == null) {
     return robot.router.get(`/${robot.name}/help`, (req, res) => {
-      let cmds = renamedHelpCommands(robot).map(cmd => cmd.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'))
+      let cmds = getHelpCommands(robot).map(cmd => cmd.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'))
 
       if (req.query.q != null) {
         cmds = cmds.filter(cmd => cmd.match(new RegExp(req.query.q, 'i')))
