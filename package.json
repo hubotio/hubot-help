@@ -33,13 +33,14 @@
     "grunt-release": "^0.14.0",
     "hubot": "^3.0.0",
     "hubot-mock-adapter-v3": "^1.0.0",
+    "hubot-test-helper": "^1.8.1",
     "matchdep": "^0.1.2",
     "mocha": "^3.0.2",
     "nyc": "^11.0.3",
+    "semantic-release": "^6.3.6",
     "sinon": "^1.4.2",
     "sinon-chai": "^2.8.0",
-    "standard": "^10.0.2",
-    "semantic-release": "^6.3.6"
+    "standard": "^10.0.2"
   },
   "main": "index.coffee",
   "scripts": {
