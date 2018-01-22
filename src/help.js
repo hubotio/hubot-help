@@ -18,8 +18,6 @@
 // Notes:
 //   These commands are grabbed from comment blocks at the top of each file.
 
-/* global renamedHelpCommands */
-
 const helpContents = (name, commands) => `\
 <!DOCTYPE html>
 <html>
