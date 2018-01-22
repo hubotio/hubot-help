@@ -58,8 +58,6 @@ const helpContents = (name, commands) => `\
 `
 
 module.exports = (robot) => {
-  const replyInPrivate = process.env.HUBOT_HELP_REPLY_IN_PRIVATE
-
   robot.respond(/help(?:\s+(.*))?$/i, (msg) => {
     let cmds = getHelpCommands(robot)
     const filter = msg.match[1]
@@ -74,9 +72,9 @@ module.exports = (robot) => {
 
     const emit = cmds.join('\n')
 
-    if (replyInPrivate && msg.message && msg.message.user && msg.message.user.name && msg.message.user.name !== msg.message.room) {
+    if (process.env.HUBOT_HELP_REPLY_IN_PRIVATE && msg.message && msg.message.user && msg.message.user.name && msg.message.user.name !== msg.message.room) {
       msg.reply('replied to you in private!')
-      return robot.send({ room: msg.message.user.name }, emit)
+      return msg.sendPrivate(emit)
     } else {
       return msg.send(emit)
     }

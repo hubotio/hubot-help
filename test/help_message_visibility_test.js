@@ -20,25 +20,31 @@ describe('help', () => describe('message visibility', () => {
     this.room.destroy()
   })
 
-  context('when HUBOT_HELP_REPLY_IN_PRIVATE is set', () => it('replies in a private message', function (done) {
-    process.env.HUBOT_HELP_REPLY_IN_PRIVATE = true
-    this.room.user.say('john', '@hubot help help').then(() => {
-      expect(this.room.messages).to.eql([
-        ['john', '@hubot help help'],
-        ['hubot', '@john replied to you in private!']
-      ])
-      expect(this.room.privateMessages).to.eql({
-        john: [
-            ['hubot', 'hubot help - Displays all of the help commands that this bot knows about.\nhubot help <query> - Displays all help commands that match <query>.']
-        ]
-      })
-    })
-  }))
-
   context('when HUBOT_HELP_REPLY_IN_PRIVATE is unset', () => it('replies in the same room', function (done) {
     this.room.user.say('john', '@hubot help help').then(() => {
       expect(this.room.messages).to.eql([
         ['john', '@hubot help help'],
+        ['hubot', 'hubot help - Displays all of the help commands that this bot knows about.\nhubot help <query> - Displays all help commands that match <query>.']
+      ])
+    }).then(done, done)
+  }))
+}))
+
+describe('help', () => describe('message visibility', () => {
+  beforeEach(function () {
+    process.env.HUBOT_HELP_REPLY_IN_PRIVATE = true
+    this.room = helper.createRoom()
+  })
+
+  afterEach(function () {
+    delete process.env.HUBOT_HELP_REPLY_IN_PRIVATE
+    this.room.destroy()
+  })
+
+  context('when HUBOT_HELP_REPLY_IN_PRIVATE is set', () => it('replies in a private message', function (done) {
+    this.room.user.say('john', '@hubot help help').then(() => {
+      expect(this.room.messages).to.eql([
+        ['john', '@hubot help help'],
         ['hubot', '@john replied to you in private!']
       ])
       expect(this.room.privateMessages).to.eql({
@@ -46,6 +52,6 @@ describe('help', () => describe('message visibility', () => {
             ['hubot', 'hubot help - Displays all of the help commands that this bot knows about.\nhubot help <query> - Displays all help commands that match <query>.']
         ]
       })
-    })
+    }).then(done, done)
   }))
 }))
