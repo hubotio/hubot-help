@@ -14,6 +14,9 @@
 //   HUBOT_HELP_REPLY_IN_PRIVATE - if set to any value, all `hubot help` replies are sent in private
 //   HUBOT_HELP_DISABLE_HTTP - if set, no web entry point will be declared
 //   HUBOT_HELP_HIDDEN_COMMANDS - comma-separated list of commands that will not be displayed in help
+//   HUBOT_HELP_REPLY_IN_PRIVATE - Reply in private to `help`
+//   HUBOT_HELP_PRIVATE_MSG      - Message to inform user that hubot replied in public
+//   HUBOT_HELP_USE_ID           - Reply to user id instead of user name
 //
 // Notes:
 //   These commands are grabbed from comment blocks at the top of each file.
@@ -57,8 +60,22 @@ const helpContents = (name, commands) => `\
 </html>\
 `
 
+const msgUserNameCheck = (msg) => {
+  return msg.message.user && msg.message.user.name && msg.message.user.name !== msg.message.room
+}
+
+const msgUserIdCheck = (msg) => {
+  return msg.message.id && msg.message.user.id && msg.message.user.id !== msg.message.room
+ }
+
+const replyInPrivateCheck = (replyInPrivate, msg) => {
+  return replyInPrivate && msg.message && (msgUserNameCheck(msg) || msgUserIdCheck(msg))
+}
+
 module.exports = (robot) => {
-  const replyInPrivate = process.env.HUBOT_HELP_REPLY_IN_PRIVATE
+  const replyInPrivate      = process.env.HUBOT_HELP_REPLY_IN_PRIVATE
+  const privateNotifMessage = process.env.HUBOT_HELP_PRIVATE_MSG || 'replied to you in private!'
+  const useId               = process.env.HUBOT_HELP_USE_ID
 
   robot.respond(/help(?:\s+(.*))?$/i, (msg) => {
     let cmds = getHelpCommands(robot)
@@ -74,8 +91,13 @@ module.exports = (robot) => {
 
     const emit = cmds.join('\n')
 
-    if (replyInPrivate && msg.message && msg.message.user && msg.message.user.name && msg.message.user.name !== msg.message.room) {
-      msg.reply('replied to you in private!')
+    if (replyInPrivateCheck(replyInPrivate, msg)) {
+      if(msgUserNameCheck(msg) {
+        msg.reply(privateNotifMessage)
+      }
+      if (useId && msgUserIdCheck(msg)) {
+        return robot.send({ room: msg.message.user.id }, emit)
+      }
       return robot.send({ room: msg.message.user.name }, emit)
     } else {
       return msg.send(emit)
