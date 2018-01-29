@@ -28,6 +28,8 @@ You can set various environment variables to tune up the behavior of thios help 
 - `HUBOT_HELP_REPLY_IN_PRIVATE` (set to any value) will force calls to `hubot help` to be answered in private
 - `HUBOT_HELP_DISABLE_HTTP` (set to any value) will disable the web interface for help
 - `HUBOT_HELP_HIDDEN_COMMANDS` comma-separated list of commands that will not be displayed in help
+- `HUBOT_HELP_PRIVATE_MSG` Message to inform user that hubot replied in private
+- `HUBOT_HELP_USE_ID` Reply to user id instead of user name
 
 Development
 -----------------
