@@ -15,7 +15,7 @@
 //   HUBOT_HELP_DISABLE_HTTP - if set, no web entry point will be declared
 //   HUBOT_HELP_HIDDEN_COMMANDS - comma-separated list of commands that will not be displayed in help
 //   HUBOT_HELP_REPLY_IN_PRIVATE - Reply in private to `help`
-//   HUBOT_HELP_PRIVATE_MSG      - Message to inform user that hubot replied in public
+//   HUBOT_HELP_PRIVATE_MSG      - Message to inform user that hubot replied in private
 //   HUBOT_HELP_USE_ID           - Reply to user id instead of user name
 //
 // Notes:
