@@ -92,7 +92,7 @@ module.exports = (robot) => {
     const emit = cmds.join('\n')
 
     if (replyInPrivateCheck(replyInPrivate, msg)) {
-      if(msgUserNameCheck(msg) {
+      if(msgUserNameCheck(msg)) {
         msg.reply(privateNotifMessage)
       }
       if (useId && msgUserIdCheck(msg)) {
