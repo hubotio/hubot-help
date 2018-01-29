@@ -66,16 +66,16 @@ const msgUserNameCheck = (msg) => {
 
 const msgUserIdCheck = (msg) => {
   return msg.message.id && msg.message.user.id && msg.message.user.id !== msg.message.room
- }
+}
 
 const replyInPrivateCheck = (replyInPrivate, msg) => {
   return replyInPrivate && msg.message && (msgUserNameCheck(msg) || msgUserIdCheck(msg))
 }
 
 module.exports = (robot) => {
-  const replyInPrivate      = process.env.HUBOT_HELP_REPLY_IN_PRIVATE
+  const replyInPrivate = process.env.HUBOT_HELP_REPLY_IN_PRIVATE
   const privateNotifMessage = process.env.HUBOT_HELP_PRIVATE_MSG || 'replied to you in private!'
-  const useId               = process.env.HUBOT_HELP_USE_ID
+  const useId = process.env.HUBOT_HELP_USE_ID
 
   robot.respond(/help(?:\s+(.*))?$/i, (msg) => {
     let cmds = getHelpCommands(robot)
@@ -92,7 +92,7 @@ module.exports = (robot) => {
     const emit = cmds.join('\n')
 
     if (replyInPrivateCheck(replyInPrivate, msg)) {
-      if(msgUserNameCheck(msg)) {
+      if (msgUserNameCheck(msg)) {
         msg.reply(privateNotifMessage)
       }
       if (useId && msgUserIdCheck(msg)) {
