@@ -73,7 +73,7 @@ module.exports = (robot) => {
     const emit = cmds.join('\n')
 
     if (process.env.HUBOT_HELP_REPLY_IN_PRIVATE && msg.message && msg.message.user && msg.message.user.name && msg.message.user.name !== msg.message.room) {
-      msg.reply('replied to you in private!')
+      msg.reply('I just replied to you in private.')
       return msg.sendPrivate(emit)
     } else {
       return msg.send(emit)

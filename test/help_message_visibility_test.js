@@ -45,7 +45,7 @@ describe('help', () => describe('message visibility', () => {
     this.room.user.say('john', '@hubot help help').then(() => {
       expect(this.room.messages).to.eql([
         ['john', '@hubot help help'],
-        ['hubot', '@john replied to you in private!']
+        ['hubot', '@john I just replied to you in private.']
       ])
       expect(this.room.privateMessages).to.eql({
         john: [
