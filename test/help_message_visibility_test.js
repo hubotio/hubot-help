@@ -13,6 +13,7 @@ const helper = new Helper('../src/help.js')
 
 describe('help', () => describe('message visibility', () => {
   beforeEach(function () {
+    this.timeout(5000)
     this.room = helper.createRoom()
   })
 
