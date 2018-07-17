@@ -58,9 +58,10 @@ const helpContents = (name, commands) => `\
 `
 
 module.exports = (robot) => {
-  robot.respond(/help(?:\s+(.*))?$/i, (msg) => {
+  const helpRE = new RegExp('(@' + robot.name + '\\s)?help(?:\\s+(.*))?$', 'i')
+  robot.respond(helpRE, (msg) => {
     let cmds = getHelpCommands(robot)
-    const filter = msg.match[1]
+    const filter = msg.match[2]
 
     if (filter) {
       cmds = cmds.filter(cmd => cmd.match(new RegExp(filter, 'i')))
