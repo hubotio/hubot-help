@@ -59,7 +59,7 @@ const helpContents = (name, commands) => `\
 
 module.exports = (robot) => {
   robot.respond(/help(?:\s+(.*))?$/i, (msg) => {
-    let cmds = getHelpCommands(robot)
+    let cmds = getHelpCommands(robot, msg.message.user.name.toString())
     const filter = msg.match[1]
 
     if (filter) {
@@ -82,7 +82,8 @@ module.exports = (robot) => {
 
   if (process.env.HUBOT_HELP_DISABLE_HTTP == null) {
     return robot.router.get(`/${robot.name}/help`, (req, res) => {
-      let cmds = getHelpCommands(robot).map(cmd => cmd.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'))
+      let msg
+      let cmds = getHelpCommands(robot, msg.message.user.name.toString()).map(cmd => cmd.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'))
 
       if (req.query.q != null) {
         cmds = cmds.filter(cmd => cmd.match(new RegExp(req.query.q, 'i')))
@@ -97,6 +98,12 @@ module.exports = (robot) => {
     })
   }
 }
+var stringFormatting = function stringFormatting (str) {
+  const rights = /\(privileged: admins only\)/
+  str = '*' + str
+  str = str.replace(/ - /i, ' *- ')
+  return str.replace(rights, '`privileged: admins only`')
+}
 
 var getHelpCommands = function getHelpCommands (robot) {
   let helpCommands = robot.helpCommands()
@@ -109,10 +116,12 @@ var getHelpCommands = function getHelpCommands (robot) {
 
   helpCommands = helpCommands.map((command) => {
     if (robotName.length === 1) {
-      return command.replace(/^hubot\s*/i, robotName)
+      command = command.replace(/^hubot\s*/i, robotName)
+      return stringFormatting(command)
     }
 
-    return command.replace(/^hubot/i, robotName)
+    command = command.replace(/^hubot/i, robotName)
+    return stringFormatting(command)
   })
 
   return helpCommands.sort()

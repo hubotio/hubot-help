@@ -25,7 +25,7 @@ describe('help', () => describe('message visibility', () => {
     this.room.user.say('john', '@hubot help help').then(() => {
       expect(this.room.messages).to.eql([
         ['john', '@hubot help help'],
-        ['hubot', 'hubot help - Displays all of the help commands that this bot knows about.\nhubot help <query> - Displays all help commands that match <query>.']
+        ['hubot', '*hubot help *- Displays all of the help commands that this bot knows about.\n*hubot help <query> *- Displays all help commands that match <query>.']
       ])
     }).then(done, done)
   }))
@@ -50,7 +50,7 @@ describe('help', () => describe('message visibility', () => {
       ])
       expect(this.room.privateMessages).to.eql({
         john: [
-            ['hubot', 'hubot help - Displays all of the help commands that this bot knows about.\nhubot help <query> - Displays all help commands that match <query>.']
+            ['hubot', '*hubot help *- Displays all of the help commands that this bot knows about.\n*hubot help <query> *- Displays all help commands that match <query>.']
         ]
       })
     }).then(done, done)
