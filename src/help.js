@@ -58,8 +58,43 @@ const helpContents = (name, commands) => `\
 `
 
 module.exports = (robot) => {
-  robot.respond(/help(?:\s+(.*))?$/i, (msg) => {
-    let cmds = getHelpCommands(robot)
+
+  const routines = require('hubot-routines')
+  const robotName = robot.alias || robot.name
+  const rights = /\(privileged: admins only\)/
+
+
+  function hiddenCommandsPattern () {
+    const hiddenCommands = process.env.HUBOT_HELP_HIDDEN_COMMANDS != null ? process.env.HUBOT_HELP_HIDDEN_COMMANDS.split(',') : undefined
+    if (hiddenCommands) {
+      return new RegExp(`^hubot (?:${hiddenCommands != null ? hiddenCommands.join('|') : undefined}) - `)
+    }
+  }
+
+  async function getHelpCommands (robot, username) {
+    let helpCommands = robot.helpCommands()
+  
+    if (hiddenCommandsPattern()) {
+      helpCommands = helpCommands.filter(command => !hiddenCommandsPattern().test(command))
+    }
+
+    if (!await routines.isAdmin(robot, username)){
+      helpCommands = helpCommands.filter(command => !rights.test(command))
+    }
+  
+    helpCommands = helpCommands.map((command) => {
+      if (robotName.length === 1) {
+        return command.replace(/^hubot\s*/i, robotName)
+      }
+  
+        return command.replace(/^hubot/i, robotName)
+    })
+  
+    return helpCommands.sort()
+  }
+  
+  robot.respond(/help(?:\s+(.*))?$/i, async (msg) => {
+    let cmds = await getHelpCommands(robot, msg.message.user.name.toString())
     const filter = msg.match[1]
 
     if (filter) {
@@ -82,7 +117,7 @@ module.exports = (robot) => {
 
   if (process.env.HUBOT_HELP_DISABLE_HTTP == null) {
     return robot.router.get(`/${robot.name}/help`, (req, res) => {
-      let cmds = getHelpCommands(robot).map(cmd => cmd.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'))
+      let cmds = getHelpCommands(robot, msg.message.user.name.toString()).map(cmd => cmd.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'))
 
       if (req.query.q != null) {
         cmds = cmds.filter(cmd => cmd.match(new RegExp(req.query.q, 'i')))
@@ -98,29 +133,4 @@ module.exports = (robot) => {
   }
 }
 
-var getHelpCommands = function getHelpCommands (robot) {
-  let helpCommands = robot.helpCommands()
 
-  const robotName = robot.alias || robot.name
-
-  if (hiddenCommandsPattern()) {
-    helpCommands = helpCommands.filter(command => !hiddenCommandsPattern().test(command))
-  }
-
-  helpCommands = helpCommands.map((command) => {
-    if (robotName.length === 1) {
-      return command.replace(/^hubot\s*/i, robotName)
-    }
-
-    return command.replace(/^hubot/i, robotName)
-  })
-
-  return helpCommands.sort()
-}
-
-var hiddenCommandsPattern = function hiddenCommandsPattern () {
-  const hiddenCommands = process.env.HUBOT_HELP_HIDDEN_COMMANDS != null ? process.env.HUBOT_HELP_HIDDEN_COMMANDS.split(',') : undefined
-  if (hiddenCommands) {
-    return new RegExp(`^hubot (?:${hiddenCommands != null ? hiddenCommands.join('|') : undefined}) - `)
-  }
-}
