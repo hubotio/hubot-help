@@ -60,7 +60,12 @@ const helpContents = (name, commands) => `\
 module.exports = (robot) => {
   robot.respond(/help(?:\s+(.*))?$/i, (msg) => {
     let cmds = getHelpCommands(robot, msg.message.user.name.toString())
+    let rich
     const filter = msg.match[1]
+
+    rich = {
+      attachments: sortByGroup(cmds)
+    }
 
     if (filter) {
       cmds = cmds.filter(cmd => cmd.match(new RegExp(filter, 'i')))
@@ -76,7 +81,7 @@ module.exports = (robot) => {
       msg.reply('I just replied to you in private.')
       return msg.sendPrivate(emit)
     } else {
-      return msg.send(emit)
+      return msg.send(rich)
     }
   })
 
@@ -105,8 +110,57 @@ var stringFormatting = function stringFormatting (str) {
   return str.replace(rights, '`privileged: admins only`')
 }
 
+var sortByGroup = function sortByGroup (command) {
+  let active = !!0
+  let group = []
+  let groups = []
+  let title
+
+  command.map(iteam => {
+    if (~iteam.indexOf('begin group')) {
+      active = !!1
+    }
+    if (!active) {
+      group.push(iteam)
+    }
+
+    if (~iteam.indexOf('end group')) {
+      active = !!0
+    }
+  })
+
+  groups.push({
+    color: '#FF5555',
+    title: 'all commands',
+    text: group.join('\n')
+  })
+
+  group = []
+
+  command.map(iteam => {
+    if (~iteam.indexOf('end group')) {
+      active = !!0
+      groups.push({
+        color: '#FF5555',
+        title: title,
+        text: group.join('\n')
+      })
+      group = []
+    }
+
+    if (active) {
+      group.push(iteam)
+    }
+
+    if (~iteam.indexOf('begin group')) {
+      active = !!1
+      title = iteam.slice('begin group'.length + 1, iteam.length)
+    }
+  })
+  return groups
+}
 var getHelpCommands = function getHelpCommands (robot) {
-  let helpCommands = robot.helpCommands()
+  let helpCommands = robot.commands
 
   const robotName = robot.alias || robot.name
 
@@ -121,10 +175,10 @@ var getHelpCommands = function getHelpCommands (robot) {
     }
 
     command = command.replace(/^hubot/i, robotName)
-    return stringFormatting(command)
+    command = stringFormatting(command)
+    return command
   })
-
-  return helpCommands.sort()
+  return helpCommands
 }
 
 var hiddenCommandsPattern = function hiddenCommandsPattern () {

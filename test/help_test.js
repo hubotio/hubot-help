@@ -29,6 +29,7 @@ const newTestRobot = function newTestRobot () {
 }
 
 const deleteFormating = function deleteFormating (strings) {
+  strings[0] = strings[0].attachments[0].text
   while (strings[0].indexOf('*-') !== -1) {
     strings[0] = strings[0].replace(/\*-/i, '-')
   }
