@@ -80,6 +80,32 @@ module.exports = (robot) => {
     }
   })
 
+  robot.listen(msg => {
+    const regExps = robot.listeners.map(item => {
+      if (item.regex && item.regex.source) {
+        return item.regex
+      }
+    }).filter(item => item)
+    for (const reg of regExps) {
+      const match = msg.text.match(reg)
+      if (match && match[0]) {
+        return false
+      }
+    }
+
+    return true
+  }, {}, msg => {
+    const message = msg.message.text.replace('rocketbot ', '')
+    const robotName = robot.alias || robot.name
+    const ingnorWords = new RegExp(`${robotName} |\\s<.*>|\\s@.*`, 'g')
+    let commands = getHelpCommands(robot)
+        .filter(command => !command.match(/^begin|^end/i))
+        .map(command => command.slice(0, command.indexOf('-') - 1))
+        .filter(command => typoCorrection(message, command.replace(ingnorWords, '')))
+
+    if (commands.length) msg.send(`Может ты имел ввиду - ${commands.map(command => `*${command}*`).join(', ')}?`)
+  })
+
   if (process.env.HUBOT_HELP_DISABLE_HTTP == null) {
     return robot.router.get(`/${robot.name}/help`, (req, res) => {
       let cmds = getHelpCommands(robot).map(cmd => cmd.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'))
@@ -123,4 +149,51 @@ var hiddenCommandsPattern = function hiddenCommandsPattern () {
   if (hiddenCommands) {
     return new RegExp(`^hubot (?:${hiddenCommands != null ? hiddenCommands.join('|') : undefined}) - `)
   }
+}
+
+var typoCorrection = function typoCorrection (checked, correct) {
+  let checkedWord = checked.toLowerCase().split('')
+  let correctWord = correct.toLowerCase().split('')
+  let lengthWord = correct.length
+  let intersections = []
+  let pass
+  let characterShift = []
+  let expectedWord
+  let check
+  if (correctWord.length - checkedWord.length > 3) return false
+  for (let i = 0; i <= lengthWord - 1; i++) {
+    if (pass === checkedWord[i]) {
+      for (let j = -1; j >= -2; j--) {
+        if (correctWord[i] === checkedWord[i + j]) intersections.push(j)
+      }
+    }
+    if (intersections.length - 1 === i) continue
+    for (let j = -1 * (intersections[i - 1] === null || intersections[i - 1] === -1); j <= 2; j++) {
+      if (correctWord[i] === checkedWord[i + j] && i + j <= lengthWord - 1) {
+        intersections.push(j)
+        if (j > 0) pass = checkedWord[i + j]
+        break
+      }
+    }
+    if (intersections.length - 1 < i) {
+      intersections.push(null)
+      if (intersections[i - 1] !== null && intersections[i - 2] !== null) {
+        characterShift.push(correctWord[i])
+      }
+    }
+  }
+  intersections.push('', '', '')
+  intersections = intersections.map((iteam, index) => iteam === null ? null : iteam + index)
+
+  expectedWord = intersections.map(word => {
+    if (word !== null) {
+      return checkedWord[word]
+    } else if (characterShift.length) {
+      return characterShift.shift()
+    }
+  }).join('')
+  if (expectedWord.length <= 2) return false
+  check = new RegExp(expectedWord.slice(0, correct.length), 'i')
+
+  return !!correct.match(check)
 }
