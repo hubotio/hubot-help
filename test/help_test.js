@@ -29,13 +29,8 @@ const newTestRobot = function newTestRobot () {
 }
 
 const deleteFormating = function deleteFormating (strings) {
-  while (strings[0].indexOf('*-') !== -1) {
-    strings[0] = strings[0].replace(/\*-/i, '-')
-  }
-
-  while (strings[0].indexOf('*') !== -1) {
-    strings[0] = strings[0].replace(/\*/i, '')
-  }
+  strings[0] = strings[0].attachments[0].text
+  strings[0] = strings[0].replace(/\*/g, '')
 }
 
 describe('help', () => describe('getHelpCommands', () => {
