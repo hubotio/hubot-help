@@ -11,6 +11,8 @@ const Helper = require('hubot-test-helper')
 
 const helper = new Helper('../src/help.js')
 
+const delay = time => new Promise(resolve => setTimeout(resolve, time))
+
 describe('help', () => describe('message visibility', () => {
   beforeEach(function () {
     this.timeout(5000)
@@ -23,23 +25,24 @@ describe('help', () => describe('message visibility', () => {
 
   context('when HUBOT_HELP_REPLY_IN_PRIVATE is unset', () => it('replies in the same room', function (done) {
     this.room.user.say('john', '@hubot help help').then(() => {
-      expect(this.room.messages).to.eql([
-        ['john', '@hubot help help'],
-        ['hubot',
-          {
-            'attachments': [
-              {
-                'color': '#459d87',
-                'text': '*hubot help *- Displays all of the help commands that this bot knows about.\n*hubot help <query> *- Displays all help commands that match <query>.',
-                'title': 'Other commands',
-                'collapsed': true
-              }
-            ]
-          }
-
-        ]
-      ])
-    }).then(done, done)
+      delay(1).then(() => {
+        expect(this.room.messages).to.eql([
+          ['john', '@hubot help help'],
+          ['hubot',
+            {
+              'attachments': [
+                {
+                  'color': '#459d87',
+                  'text': '*hubot help *- Displays all of the help commands that this bot knows about.\n*hubot help <query> *- Displays all help commands that match <query>.',
+                  'title': 'Other commands',
+                  'collapsed': true
+                }
+              ]
+            }
+          ]
+        ])
+      }).then(done, done)
+    })
   }))
 }))
 
@@ -56,14 +59,16 @@ describe('help', () => describe('message visibility', () => {
 
   context('when HUBOT_HELP_REPLY_IN_PRIVATE is set', () => it('replies in a private message', function (done) {
     this.room.user.say('john', '@hubot help help').then(() => {
-      expect(this.room.messages).to.eql([
-        ['john', '@hubot help help'],
-        ['hubot', '@john I just replied to you in private.']
-      ])
-      expect(this.room.privateMessages).to.eql({
-        john: [
+      delay(1).then(() => {
+        expect(this.room.messages).to.eql([
+          ['john', '@hubot help help'],
+          ['hubot', '@john I just replied to you in private.']
+        ])
+        expect(this.room.privateMessages).to.eql({
+          john: [
             ['hubot', '*hubot help *- Displays all of the help commands that this bot knows about.\n*hubot help <query> *- Displays all help commands that match <query>.']
-        ]
+          ]
+        })
       })
     }).then(done, done)
   }))

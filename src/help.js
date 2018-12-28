@@ -61,7 +61,7 @@ const routines = require('hubot-routines')
 let groupCommand
 
 module.exports = (robot) => {
-  robot.respond(/help(?:\s+(.*))?$/i, (msg) => {
+  robot.respond(/help(?:\s+(.*))?$/i, async (msg) => {
     let cmds = getHelpCommands(robot, msg.message.user.name)
     const filter = msg.match[1]
 
@@ -80,6 +80,7 @@ module.exports = (robot) => {
       return msg.sendPrivate(emit)
     } else {
       groupCommand = groupByMarkerGroupName(robot, cmds, 'group')
+      groupCommand = await filterStatus(robot, groupCommand, msg.message.user.name)
       return msg.send(makeRichMessage(groupCommand))
     }
   })
@@ -171,6 +172,27 @@ var groupByMarkerGroupName = function groupByMarkerGroupName (robot, commands, m
     }
   })
   return commandsObject
+}
+
+/**
+ * Filter the commands by availability to requested user.
+ *
+ * @param {Robot} robot - Hubot instance.
+ * @param {object} groups  - Object of commands which are spited by script name and by group to be filtered.
+ * @param {string} userName - Username of user who requested the help message.
+ *
+ * @returns {object}
+ */
+var filterStatus = async function filterStatus (robot, groups, userName) {
+  let isAdmin = await routines.isAdmin(robot, userName)
+
+  for (let group in groups) {
+    let commands = groups[group]
+    let sortForStatus = groupByMarkerGroupName(robot, commands, 'admin')
+    let groupAdmin = (isAdmin && ('' in sortForStatus)) ? ['\nAdmin only:'].concat(sortForStatus['']) : []
+    groups[group] = [...sortForStatus['Other commands'], ...groupAdmin]
+  }
+  return groups
 }
 
 /**

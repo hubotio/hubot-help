@@ -21,6 +21,10 @@
   "bugs": {
     "url": "https://github.com/hubotio/hubot-help/issues"
   },
+  "dependencies": {
+    "moment": "^2.22.2",
+    "hubot-routines": "https://github.com/tolstoyevsky/hubot-routines.git"
+  },
   "peerDependencies": {
     "hubot": ">=2 <10 || 0.0.0-development"
   },
