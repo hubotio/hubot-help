@@ -10,9 +10,9 @@ See [`src/help.js`](src/help.js) for full documentation.
 Features
 -----------------
 
-Allows grouping commands by name of script they belong to. 
+* Allows grouping commands by name of script they belong to. 
 
-For grouping commands, frame list of them by markers `begin group script_name` and `end group`. All commands out of markers go to the `Other command` group. 
+    For grouping commands, frame list of them by markers `begin group script_name` and `end group`. All commands out of markers go to the `Other command` group. 
 
 ```
 //
@@ -31,6 +31,33 @@ Example result:
 </p>
 <p align="left">
     <img src="screenshots/example_output.png" width="400">
+</p>
+
+* Allows marking commands as `admin only` and showing to users only avalible commands.
+
+    To use this extention, frame list of commands by markers `begin admin` and `end admin`. The commands inside marker will be not shown to non-admin users.
+
+```
+//
+// Commands:
+//   begin group script_name
+//    hubot command - command avalible for all users
+//    ...
+//      begin admin
+//        hubot command - command avalible only for admins
+//        ...
+//      end admin
+//   end group
+//
+```
+
+Example result:
+
+<p align="left">
+    <img src="screenshots/example_output_admin.png" width="700">
+</p>
+<p align="left">
+    <img src="screenshots/example_output_non_admin.png" width="700">
 </p>
 
 Check the [hubot-happy-birthder](https://github.com/tolstoyevsky/hubot-happy-birthder/blob/master/src/birthder.js) and [hubot-viva-las-vegas](https://github.com/tolstoyevsky/hubot-viva-las-vegas/blob/master/src/viva.js) repos for exapmle usage.
