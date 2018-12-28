@@ -3,9 +3,8 @@ sudo: false
 notifications:
   email: false
 node_js:
-  - "8" # latest stable
-  - "6" # LTS
-  - "4" # maintenance
+  - "10" # latest stable
+  - "8" # LTS
 before_script:
   - npm prune
 after_success:

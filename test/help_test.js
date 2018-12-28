@@ -28,6 +28,11 @@ const newTestRobot = function newTestRobot () {
   return robot
 }
 
+const deleteFormating = function deleteFormating (strings) {
+  strings[0] = strings[0].attachments[0].text
+  strings[0] = strings[0].replace(/\*/g, '')
+}
+
 describe('help', () => describe('getHelpCommands', () => {
   beforeEach(function () {
     this.robot = newTestRobot()
@@ -41,6 +46,8 @@ describe('help', () => describe('getHelpCommands', () => {
 
   context('when HUBOT_HELP_HIDDEN_COMMANDS is not set', () => it('lists all commands', function (done) {
     this.robot.adapter.on('send', function (envelope, strings) {
+      deleteFormating(strings)
+
       const commands = strings[0].split('\n')
 
       expect(commands.length).to.eql(2)
@@ -55,6 +62,7 @@ describe('help', () => describe('getHelpCommands', () => {
   context('when HUBOT_HELP_HIDDEN_COMMANDS is set', () => it('lists all commands but those in environment variable', function (done) {
     process.env.HUBOT_HELP_HIDDEN_COMMANDS = 'help'
     this.robot.adapter.on('send', function (envelope, strings) {
+      deleteFormating(strings)
       const commands = strings[0].split('\n')
 
       expect(commands.length).to.eql(1)

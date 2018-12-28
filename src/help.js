@@ -56,10 +56,13 @@ const helpContents = (name, commands) => `\
   </body>
 </html>\
 `
+const routines = require('hubot-routines')
+
+let groupCommand
 
 module.exports = (robot) => {
-  robot.respond(/help(?:\s+(.*))?$/i, (msg) => {
-    let cmds = getHelpCommands(robot)
+  robot.respond(/help(?:\s+(.*))?$/i, async (msg) => {
+    let cmds = getHelpCommands(robot, msg.message.user.name)
     const filter = msg.match[1]
 
     if (filter) {
@@ -76,13 +79,16 @@ module.exports = (robot) => {
       msg.reply('I just replied to you in private.')
       return msg.sendPrivate(emit)
     } else {
-      return msg.send(emit)
+      groupCommand = groupByMarkerGroupName(robot, cmds, 'group')
+      groupCommand = await filterStatus(robot, groupCommand, msg.message.user.name)
+      return msg.send(makeRichMessage(groupCommand))
     }
   })
 
   if (process.env.HUBOT_HELP_DISABLE_HTTP == null) {
     return robot.router.get(`/${robot.name}/help`, (req, res) => {
-      let cmds = getHelpCommands(robot).map(cmd => cmd.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'))
+      let msg
+      let cmds = getHelpCommands(robot, msg.message.user.name).map(cmd => cmd.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'))
 
       if (req.query.q != null) {
         cmds = cmds.filter(cmd => cmd.match(new RegExp(req.query.q, 'i')))
@@ -97,9 +103,131 @@ module.exports = (robot) => {
     })
   }
 }
+var stringFormatting = function stringFormatting (str) {
+  if (!str.match(/^(begin|end)/i)) {
+    str = '*' + str
+    str = str.replace(/ - /i, ' *- ')
+  }
+  return str
+}
+
+/**
+ * Parse the array with commands and write groups names and relevant commands to the object.
+ *
+ * @param {Robot} robot - Hubot instance.
+ * @param {array} commands - Array of commands.
+ * @param {string} markerName - The name of the marker that mark a start of commands group.
+ *
+ * @returns {object}
+ */
+var groupByMarkerGroupName = function groupByMarkerGroupName (robot, commands, markerName) {
+  let commandsObject = {}
+  let errStatus
+  let groupName
+  let inMarkerGroup = false
+  let inOpeningMarker = false
+  let marker
+  let markerFullName
+  let markerGroupName
+  let markerMatch
+  let markerReg = new RegExp(`(begin|end)\\s*(${markerName})\\s*(.*)`, 'i')
+  let markerRole
+
+  let pushInGroup = (command, markerGroupName) => {
+    if (!commandsObject[markerGroupName]) {
+      commandsObject[markerGroupName] = []
+    }
+    commandsObject[markerGroupName].push(command)
+  }
+  commands.map((command, index) => {
+    markerMatch = command.match(markerReg)
+    if (markerMatch) {
+      marker = markerMatch[1]
+      markerRole = markerMatch[2]
+      groupName = markerMatch[3]
+      markerFullName = markerMatch[0]
+      if ((inMarkerGroup && (marker + markerRole) === 'begingroup')) {
+        errStatus = `closing`
+      }
+      if (!inOpeningMarker && markerFullName === `end ${markerName}`) {
+        markerGroupName = !inOpeningMarker ? false : markerGroupName
+        errStatus = `opening`
+      }
+
+      inOpeningMarker = marker === 'begin'
+      inMarkerGroup = inOpeningMarker && markerRole === markerName
+      markerGroupName = (inMarkerGroup && markerFullName) ? groupName : markerGroupName
+    } else {
+      if (inMarkerGroup) {
+        if (commands.length === index + 1) {
+          errStatus = `closing`
+        }
+        pushInGroup(command, markerGroupName)
+      } else {
+        pushInGroup(command, 'Other commands')
+      }
+    }
+    if (errStatus) {
+      throw (routines.rave(robot, `${markerGroupName ? `In the script "${markerGroupName}" ` : `In some script`} the ${errStatus} marker was not found.`))
+    }
+  })
+  return commandsObject
+}
+
+/**
+ * Filter the commands by availability to requested user.
+ *
+ * @param {Robot} robot - Hubot instance.
+ * @param {object} groups  - Object of commands which are spited by script name and by group to be filtered.
+ * @param {string} userName - Username of user who requested the help message.
+ *
+ * @returns {object}
+ */
+var filterStatus = async function filterStatus (robot, groups, userName) {
+  let isAdmin = await routines.isAdmin(robot, userName)
+
+  for (let group in groups) {
+    let commands = groups[group]
+    let sortForStatus = groupByMarkerGroupName(robot, commands, 'admin')
+    let groupAdmin = (isAdmin && ('' in sortForStatus)) ? ['\nAdmin only:'].concat(sortForStatus['']) : []
+    groups[group] = [...sortForStatus['Other commands'], ...groupAdmin]
+  }
+  return groups
+}
+
+/**
+ * Construct the array of rich messages.
+ *
+ * @param {object} groupCommand - Object with commands divided into groups by keys.
+ *
+ * @returns {object}
+ */
+var makeRichMessage = function makeRichMessage (groupCommand) {
+  let result = []
+  let makeRichMessage = (group) => {
+    let commandText
+    commandText = groupCommand[group]
+
+    result.push({
+      color: '#459d87',
+      title: group,
+      text: commandText.join('\n'),
+      collapsed: true
+    })
+  }
+  for (let group in groupCommand) {
+    if (group !== 'Other commands') {
+      makeRichMessage(group)
+    }
+  }
+  if (groupCommand['Other commands']) {
+    makeRichMessage('Other commands')
+  }
+  return {attachments: result}
+}
 
 var getHelpCommands = function getHelpCommands (robot) {
-  let helpCommands = robot.helpCommands()
+  let helpCommands = robot.commands
 
   const robotName = robot.alias || robot.name
 
@@ -109,13 +237,15 @@ var getHelpCommands = function getHelpCommands (robot) {
 
   helpCommands = helpCommands.map((command) => {
     if (robotName.length === 1) {
-      return command.replace(/^hubot\s*/i, robotName)
+      command = command.replace(/^hubot\s*/i, robotName)
+      return stringFormatting(command)
     }
 
-    return command.replace(/^hubot/i, robotName)
+    command = command.replace(/^hubot/i, robotName)
+    return stringFormatting(command)
   })
 
-  return helpCommands.sort()
+  return helpCommands
 }
 
 var hiddenCommandsPattern = function hiddenCommandsPattern () {
