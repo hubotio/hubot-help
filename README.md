@@ -1,5 +1,4 @@
-Hubot Help Plugin
-==================
+# Hubot Help Plugin
 
 [![Build Status](https://travis-ci.org/hubotio/hubot-help.svg?branch=master)](https://travis-ci.org/hubotio/hubot-help) [![Coverage Status](https://coveralls.io/repos/github/hubotio/hubot-help/badge.svg?branch=master)](https://coveralls.io/github/hubotio/hubot-help?branch=master)
 
@@ -7,12 +6,11 @@ A hubot script to show available hubot commands
 
 See [`src/help.js`](src/help.js) for full documentation.
 
-Features
------------------
+## Features
 
-* Allows grouping commands by name of script they belong to. 
+* Allows grouping commands by the name of the script they belong to.
 
-    For grouping commands, frame list of them by markers `begin group script_name` and `end group`. All commands out of markers go to the `Other command` group. 
+    To group commands surround them with the markers `begin group script_name` and `end group`. All the commands behind the markers go to the `Other commands` group.
 
 ```
 //
@@ -33,9 +31,9 @@ Example result:
     <img src="screenshots/example_output.png" width="400">
 </p>
 
-* Allows marking commands as `admin only` and showing to users only avalible commands.
+* Allows marking commands as `admin only` and showing only avalible commands to users.
 
-    To use this extention, frame list of commands by markers `begin admin` and `end admin`. The commands inside marker will be not shown to non-admin users.
+    To use this extention surround the commands with the markers `begin admin` and `end admin`. The commands inside the markers will be shown only to admin users.
 
 ```
 //
@@ -51,7 +49,7 @@ Example result:
 //
 ```
 
-Example result:
+For example:
 
 <p align="left">
     <img src="screenshots/example_output_admin.png" width="700">
@@ -62,8 +60,7 @@ Example result:
 
 Check the [hubot-happy-birthder](https://github.com/tolstoyevsky/hubot-happy-birthder/blob/master/src/birthder.js) and [hubot-viva-las-vegas](https://github.com/tolstoyevsky/hubot-viva-las-vegas/blob/master/src/viva.js) repos for exapmle usage.
 
-Installation
------------------
+## Installation
 
 In hubot project repo, run:
 
@@ -75,28 +72,29 @@ Then add **hubot-help** to your `external-scripts.json`:
 ["hubot-help"]
 ```
 
-Configuration
------------------
+## Configuration
 
-You can set various environment variables to tune up the behavior of thios help plugin:
+You can set various environment variables to tune up the behavior of the help script:
 
 - `HUBOT_HELP_REPLY_IN_PRIVATE` (set to any value) will force calls to `hubot help` to be answered in private
 - `HUBOT_HELP_DISABLE_HTTP` (set to any value) will disable the web interface for help
 - `HUBOT_HELP_HIDDEN_COMMANDS` comma-separated list of commands that will not be displayed in help
 
-Development
------------------
+## Development
 
 For tests:
 
     npm test
 
 
-Sample Interaction
------------------
+## Sample Interaction
 
 ```
  user> hubot help
 hubot> hubot help - Displays all of the help commands that this bot knows about.
 hubot> hubot help <query> - Displays all help commands that match <query>.
 ```
+
+## Licensing
+
+hubot-help is available under the [MIT License](LICENSE).
