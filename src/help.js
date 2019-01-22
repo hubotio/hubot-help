@@ -105,8 +105,8 @@ module.exports = (robot) => {
 }
 var stringFormatting = function stringFormatting (str) {
   if (!str.match(/^(begin|end)/i)) {
-    str = '*' + str
-    str = str.replace(/ - /i, ' *- ')
+    str = '**' + str
+    str = str.replace(/ - /i, '** - ')
   }
   return str
 }
