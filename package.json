@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/hubotio/hubot-help/issues"
   },
-  "main": "index.coffee",
+  "main": "index.js",
   "scripts": {
     "pretest": "standard",
     "test": "nyc --reporter=html --reporter=text mocha --exit",
