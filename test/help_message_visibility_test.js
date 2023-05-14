@@ -2,57 +2,65 @@
 
 /* global describe, beforeEach, afterEach, it, context */
 
+const path = require('path')
+
 const chai = require('chai')
 const expect = chai.expect
 
 chai.use(require('sinon-chai'))
 
-const Helper = require('hubot-test-helper')
+const Hubot = require('hubot')
+const Robot = Hubot.Robot
+const TextMessage = Hubot.TextMessage
 
-const helper = new Helper('../src/help.js')
+const newTestRobot = function newTestRobot () {
+  process.env.PORT = '0'
+  const robot = new Robot(null, 'mock-adapter-v3', true, 'hubot')
 
-describe('help', () => describe('message visibility', () => {
+  robot.loadFile(path.resolve('src/'), 'help.js')
+
+  robot.adapter.on('connected', () => robot.brain.userForId('1', {
+    name: 'john',
+    real_name: 'John Doe',
+    room: '#test'
+  }))
+
+  return robot
+}
+
+describe('help in private', () => describe('message visibility', () => {
   beforeEach(function () {
-    this.timeout(5000)
-    this.room = helper.createRoom()
+    this.robot = newTestRobot()
+    this.robot.run()
+    this.user = this.robot.brain.userForName('john')
   })
 
   afterEach(function () {
-    this.room.destroy()
+    this.robot.shutdown()
   })
 
   context('when HUBOT_HELP_REPLY_IN_PRIVATE is unset', () => it('replies in the same room', function (done) {
-    this.room.user.say('john', '@hubot help help').then(() => {
-      expect(this.room.messages).to.eql([
-        ['john', '@hubot help help'],
-        ['hubot', 'hubot help - Displays all of the help commands that this bot knows about.\nhubot help <query> - Displays all help commands that match <query>.']
+    this.robot.adapter.on('send', function (envelope, strings) {
+      expect(envelope.room).to.eql('#test')
+      expect(strings[0].split('\n')).to.eql([
+        'hubot help - Displays all of the help commands that this bot knows about.',
+        'hubot help <query> - Displays all help commands that match <query>.'
       ])
-    }).then(done, done)
+      return done()
+    })
+    return this.robot.adapter.receive(new TextMessage(this.user, '@hubot help help'))
   }))
-}))
 
-describe('help', () => describe('message visibility', () => {
-  beforeEach(function () {
-    process.env.HUBOT_HELP_REPLY_IN_PRIVATE = true
-    this.room = helper.createRoom()
-  })
-
-  afterEach(function () {
-    delete process.env.HUBOT_HELP_REPLY_IN_PRIVATE
-    this.room.destroy()
-  })
-
-  context('when HUBOT_HELP_REPLY_IN_PRIVATE is set', () => it('replies in a private message', function (done) {
-    this.room.user.say('john', '@hubot help help').then(() => {
-      expect(this.room.messages).to.eql([
-        ['john', '@hubot help help'],
-        ['hubot', '@john I just replied to you in private.']
+  context('when HUBOT_HELP_REPLY_IN_PRIVATE is set', () => it('replies in private', function (done) {
+    process.env.HUBOT_HELP_REPLY_IN_PRIVATE = 'true'
+    this.robot.adapter.on('send', function (envelope, strings) {
+      expect(envelope.room).to.eql('1')
+      expect(strings[0].split('\n')).to.eql([
+        'hubot help - Displays all of the help commands that this bot knows about.',
+        'hubot help <query> - Displays all help commands that match <query>.'
       ])
-      expect(this.room.privateMessages).to.eql({
-        john: [
-          ['hubot', 'hubot help - Displays all of the help commands that this bot knows about.\nhubot help <query> - Displays all help commands that match <query>.']
-        ]
-      })
-    }).then(done, done)
+      return done()
+    })
+    return this.robot.adapter.receive(new TextMessage(this.user, 'hubot help'))
   }))
 }))
