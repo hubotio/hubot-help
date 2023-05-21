@@ -74,7 +74,7 @@ module.exports = (robot) => {
 
     if (process.env.HUBOT_HELP_REPLY_IN_PRIVATE && msg.message && msg.message.user && msg.message.user.name && msg.message.user.name !== msg.message.room) {
       msg.reply('I just replied to you in private.')
-      return msg.sendPrivate(emit)
+      return robot.send({ room: msg.message.user.id }, emit)
     } else {
       return msg.send(emit)
     }
