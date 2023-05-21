@@ -119,7 +119,7 @@ const getHelpCommands = function getHelpCommands (robot) {
 }
 
 const hiddenCommandsPattern = function hiddenCommandsPattern () {
-  const hiddenCommands = process.env.HUBOT_HELP_HIDDEN_COMMANDS != null ? process.env.HUBOT_HELP_HIDDEN_COMMANDS.split(',') : undefined
+  const hiddenCommands = process.env.HUBOT_HELP_HIDDEN_COMMANDS != null ? process.env.HUBOT_HELP_HIDDEN_COMMANDS.split(',').map(c => c.trim()) : undefined
   if (hiddenCommands) {
     return new RegExp(`^hubot (?:${hiddenCommands != null ? hiddenCommands.join('|') : undefined}) - `)
   }
