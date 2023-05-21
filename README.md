@@ -1,7 +1,11 @@
 Hubot Help Plugin
 ==================
 
-[![Build Status](https://travis-ci.org/hubotio/hubot-help.svg?branch=master)](https://travis-ci.org/hubotio/hubot-help) [![Coverage Status](https://coveralls.io/repos/github/hubotio/hubot-help/badge.svg?branch=master)](https://coveralls.io/github/hubotio/hubot-help?branch=master)
+![Build Status](https://github.com/hubotio/hubot-help/actions/workflows/release.yml/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/hubotio/hubot-help/badge.svg?branch=master)](https://coveralls.io/github/hubotio/hubot-help?branch=master)
+
+
+
 
 A hubot script to show available hubot commands
 
