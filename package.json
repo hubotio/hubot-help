@@ -47,5 +47,11 @@
   },
   "dependencies": {
     "hubot": "^3.4.0"
+  },
+  "release": {
+    "branches": [
+      "master"
+    ],
+    "dryRun": false
   }
 }
