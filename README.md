@@ -2,10 +2,6 @@ Hubot Help Plugin
 ==================
 
 ![Build Status](https://github.com/hubotio/hubot-help/actions/workflows/release.yml/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/hubotio/hubot-help/badge.svg?branch=main)](https://coveralls.io/github/hubotio/hubot-help?branch=main)
-
-
-
 
 A hubot script to show available hubot commands
 
