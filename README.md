@@ -2,7 +2,7 @@ Hubot Help Plugin
 ==================
 
 ![Build Status](https://github.com/hubotio/hubot-help/actions/workflows/release.yml/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/hubotio/hubot-help/badge.svg?branch=master)](https://coveralls.io/github/hubotio/hubot-help?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/hubotio/hubot-help/badge.svg?branch=main)](https://coveralls.io/github/hubotio/hubot-help?branch=main)
 
 
 
