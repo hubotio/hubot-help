@@ -39,6 +39,7 @@
     "hubot-test-helper": "^1.9.0",
     "matchdep": "^2.0.0",
     "mocha": "^10.2.0",
+    "mockery": "^2.1.0",
     "nyc": "^15.1.0",
     "semantic-release": "^21.0.2",
     "sinon": "^15.0.4",
@@ -46,7 +47,7 @@
     "standard": "^17.0.0"
   },
   "dependencies": {
-    "hubot": "^3.4.0"
+    "hubot": "^4.0.0"
   },
   "release": {
     "branches": [
