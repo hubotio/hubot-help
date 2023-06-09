@@ -6,6 +6,7 @@ const path = require('path')
 
 const chai = require('chai')
 const expect = chai.expect
+const mockery = require('mockery')
 
 chai.use(require('sinon-chai'))
 
@@ -15,7 +16,7 @@ const TextMessage = Hubot.TextMessage
 
 const newTestRobot = function newTestRobot () {
   process.env.PORT = '0'
-  const robot = new Robot(null, 'mock-adapter-v3', true, 'hubot')
+  const robot = new Robot(null, 'mock-adapter', true, 'hubot')
 
   robot.loadFile(path.resolve('src/'), 'help.js')
 
@@ -30,6 +31,11 @@ const newTestRobot = function newTestRobot () {
 
 describe('help in private', () => describe('message visibility', () => {
   beforeEach(function () {
+    mockery.enable({
+      warnOnReplace: false,
+      warnOnUnregistered: false
+    })
+    mockery.registerMock('hubot-mock-adapter', require('./fixtures/MockAdapter.js'))
     this.robot = newTestRobot()
     this.robot.run()
     this.user = this.robot.brain.userForName('john')
@@ -37,6 +43,7 @@ describe('help in private', () => describe('message visibility', () => {
 
   afterEach(function () {
     this.robot.shutdown()
+    mockery.disable()
   })
 
   context('when HUBOT_HELP_REPLY_IN_PRIVATE is unset', () => it('replies in the same room', function (done) {
