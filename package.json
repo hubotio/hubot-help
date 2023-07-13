@@ -37,11 +37,11 @@
     "nyc": "^15.1.0",
     "semantic-release": "^21.0.2",
     "sinon": "^15.0.4",
-    "sinon-chai": "^3.7.0",
-    "standard": "^17.0.0"
+    "sinon-chai": "^3.7.0"
   },
   "dependencies": {
-    "hubot": "^4.0.0"
+    "hubot": "^4.0.0",
+    "standard": "^17.1.0"
   },
   "release": {
     "branches": [
