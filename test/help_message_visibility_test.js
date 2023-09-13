@@ -6,7 +6,7 @@ const path = require('path')
 
 const chai = require('chai')
 const expect = chai.expect
-const mockery = require('mockery')
+const { hook, reset } = require('./fixtures/RequireMocker.js')
 
 chai.use(require('sinon-chai'))
 
@@ -31,11 +31,7 @@ const newTestRobot = function newTestRobot () {
 
 describe('help in private', () => describe('message visibility', () => {
   beforeEach(function () {
-    mockery.enable({
-      warnOnReplace: false,
-      warnOnUnregistered: false
-    })
-    mockery.registerMock('hubot-mock-adapter', require('./fixtures/MockAdapter.js'))
+    hook('hubot-mock-adapter', require('./fixtures/MockAdapter.js'))
     this.robot = newTestRobot()
     this.robot.run()
     this.user = this.robot.brain.userForName('john')
@@ -43,7 +39,7 @@ describe('help in private', () => describe('message visibility', () => {
 
   afterEach(function () {
     this.robot.shutdown()
-    mockery.disable()
+    reset()
   })
 
   context('when HUBOT_HELP_REPLY_IN_PRIVATE is unset', () => it('replies in the same room', function (done) {
