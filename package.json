@@ -9,7 +9,7 @@
     "hubot-scripts"
   ],
   "engines": {
-    "node": "> 4.0.0"
+    "node": "> 18"
   },
   "repository": {
     "type": "git",
@@ -21,25 +21,17 @@
   "main": "index.js",
   "scripts": {
     "pretest": "standard",
-    "test": "nyc --reporter=html --reporter=text mocha --exit",
-    "coverage": "nyc report --reporter=text-lcov",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "test": "node --test",
+    "coverage": "node --test --experimental-test-coverage"
   },
   "files": [
     "index.js",
     "src"
   ],
-  "devDependencies": {
-    "chai": "^4.3.7",
-    "matchdep": "^2.0.0",
-    "mocha": "^10.2.0",
-    "nyc": "^15.1.0",
-    "semantic-release": "^21.0.2",
-    "sinon": "^15.0.4",
-    "sinon-chai": "^3.7.0"
+  "peerDependencies": {
+    "hubot": ">= 9"
   },
-  "dependencies": {
-    "hubot": "^4.0.0",
+  "devDependencies": {
     "standard": "^17.1.0"
   },
   "release": {

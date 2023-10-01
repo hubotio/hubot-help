@@ -1,23 +1,17 @@
 'use strict'
 
-/* global describe, beforeEach, afterEach, it, context */
-
+const { describe, it, beforeEach, afterEach } = require('node:test')
 const path = require('path')
-
-const chai = require('chai')
-const expect = chai.expect
-const { hook, reset } = require('./fixtures/RequireMocker.js')
-
-chai.use(require('sinon-chai'))
-
+const assert = require('node:assert/strict')
 const Hubot = require('hubot')
 const Robot = Hubot.Robot
 const TextMessage = Hubot.TextMessage
 
-const newTestRobot = function newTestRobot () {
-  process.env.PORT = '0'
-  const robot = new Robot(null, 'mock-adapter', true, 'hubot')
-  robot.loadFile(path.resolve('src/'), 'help.js')
+const newTestRobot = async () => {
+  process.env.PORT = 0
+  const robot = new Robot('mock-adapter', true, 'hubot')
+  await robot.loadFile(path.resolve('src/'), 'help.js')
+  await robot.loadAdapter('./test/fixtures/MockAdapter.js')
 
   robot.adapter.on('connected', () => robot.brain.userForId('1', {
     name: 'john',
@@ -29,55 +23,53 @@ const newTestRobot = function newTestRobot () {
 }
 
 describe('help', () => describe('getHelpCommands', () => {
-  beforeEach(function () {
-    hook('hubot-mock-adapter', require('./fixtures/MockAdapter.js'))
-    this.robot = newTestRobot()
-    this.robot.run()
-    this.user = this.robot.brain.userForName('john')
+  let robot = null
+  beforeEach(async () => {
+    robot = await newTestRobot()
+    await robot.run()
   })
 
-  afterEach(function () {
-    this.robot.shutdown()
-    reset()
+  afterEach(() => {
+    robot.shutdown()
   })
 
-  context('when HUBOT_HELP_HIDDEN_COMMANDS is not set', () => it('lists all commands', function (done) {
-    this.robot.adapter.on('send', function (envelope, strings) {
+  describe('when HUBOT_HELP_HIDDEN_COMMANDS is not set', () => it('lists all commands', async () => {
+    let wasCalled = false
+    robot.adapter.on('send', (envelope, strings) => {
       const commands = strings[0].split('\n')
-
-      expect(commands.length).to.eql(2)
-      expect(commands).to.eql(this.robot.helpCommands())
-
-      return done()
+      assert.equal(commands.length, 2)
+      assert.deepEqual(commands, robot.helpCommands())
+      wasCalled = true
     })
 
-    return this.robot.adapter.receive(new TextMessage(this.user, 'hubot help'))
+    await robot.receive(new TextMessage(this.user, 'hubot help'))
+    assert.deepEqual(wasCalled, true)
   }))
 
-  context('when HUBOT_HELP_HIDDEN_COMMANDS is set with 1 command', () => it('lists all commands but one set in environment variable', function (done) {
+  describe('when HUBOT_HELP_HIDDEN_COMMANDS is set with 1 command', () => it('lists all commands but one set in environment variable', async () => {
+    let wasCalled = false
     process.env.HUBOT_HELP_HIDDEN_COMMANDS = 'help'
-    this.robot.adapter.on('send', function (envelope, strings) {
+    robot.adapter.on('send', (envelope, strings) => {
       const commands = strings[0].split('\n')
-
-      expect(commands.length).to.eql(1)
-      expect(commands[0]).to.match(/hubot help <query> - Displays all help commands that match <query>/)
-
-      return done()
+      assert.equal(commands.length, 1)
+      assert.match(commands[0], /hubot help <query> - Displays all help commands that match <query>/)
+      wasCalled = true
     })
 
-    return this.robot.adapter.receive(new TextMessage(this.user, 'hubot help'))
+    await robot.receive(new TextMessage(this.user, 'hubot help'))
+    assert.deepEqual(wasCalled, true)
   }))
 
-  context('when HUBOT_HELP_HIDDEN_COMMANDS is set with multiple commands', () => it('lists all commands but comma separated ones in environment variable', function (done) {
+  describe('when HUBOT_HELP_HIDDEN_COMMANDS is set with multiple commands', () => it('lists all commands but comma separated ones in environment variable', async () => {
+    let wasCalled = false
     process.env.HUBOT_HELP_HIDDEN_COMMANDS = 'help, help <query>'
-    this.robot.adapter.on('send', function (envelope, strings) {
+    robot.adapter.on('send', (envelope, strings) => {
       const commands = strings[0].split('\n').filter(command => command.trim().length > 0)
-
-      expect(commands.length).to.eql(0)
-
-      return done()
+      assert.equal(commands.length, 0)
+      wasCalled = true
     })
 
-    return this.robot.adapter.receive(new TextMessage(this.user, 'hubot help'))
+    await robot.receive(new TextMessage(this.user, 'hubot help'))
+    assert.deepEqual(wasCalled, true)
   }))
 }))
