@@ -44,7 +44,7 @@ describe('help in private', () => describe('message visibility', () => {
     })
     robot.server.on('listening', async () => {
       await robot.run()
-      let user = robot.brain.userForName('john')
+      const user = robot.brain.userForName('john')
       await robot.receive(new TextMessage(user, '@hubot help help'))
       assert.deepEqual(wasCalled, true)
       done()
@@ -64,7 +64,7 @@ describe('help in private', () => describe('message visibility', () => {
     })
     robot.server.on('listening', async () => {
       await robot.run()
-      let user = robot.brain.userForName('john')
+      const user = robot.brain.userForName('john')
       await robot.receive(new TextMessage(user, 'hubot help'))
       assert.deepEqual(wasCalled, true)
       done()
