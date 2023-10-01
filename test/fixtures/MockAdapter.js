@@ -3,23 +3,23 @@
 const Adapter = require('hubot/src/adapter.js')
 
 class MockAdapter extends Adapter {
-  send (envelope, ...strings) {
+  async send (envelope, ...strings) {
     this.emit('send', envelope, strings)
   }
 
-  reply (envelope, ...strings) {
+  async reply (envelope, ...strings) {
     this.emit('reply', envelope, strings)
   }
 
-  topic (envelope, ...strings) {
+  async topic (envelope, ...strings) {
     this.emit('topic', envelope, strings)
   }
 
-  play (envelope, ...strings) {
+  async play (envelope, ...strings) {
     this.emit('play', envelope, strings)
   }
 
-  run () {
+  async run () {
     this.emit('connected')
   }
 

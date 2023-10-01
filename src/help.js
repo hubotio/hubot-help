@@ -58,14 +58,14 @@ const helpContents = (name, commands) => `\
 `
 
 module.exports = (robot) => {
-  robot.respond(/help(?:\s+(.*))?$/i, (msg) => {
+  robot.respond(/help(?:\s+(.*))?$/i, async (msg) => {
     let cmds = getHelpCommands(robot)
     const filter = msg.match[1]
 
     if (filter) {
       cmds = cmds.filter(cmd => cmd.match(new RegExp(filter, 'i')))
       if (cmds.length === 0) {
-        msg.send(`No available commands match ${filter}`)
+        await msg.send(`No available commands match ${filter}`)
         return
       }
     }
@@ -73,10 +73,10 @@ module.exports = (robot) => {
     const emit = cmds.join('\n')
 
     if (process.env.HUBOT_HELP_REPLY_IN_PRIVATE && msg.message && msg.message.user && msg.message.user.name && msg.message.user.name !== msg.message.room) {
-      msg.reply('I just replied to you in private.')
-      return robot.send({ room: msg.message.user.id }, emit)
+      await msg.reply('I just replied to you in private.')
+      return await robot.send({ room: msg.message.user.id }, emit)
     } else {
-      return msg.send(emit)
+      return await msg.send(emit)
     }
   })
 
