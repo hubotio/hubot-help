@@ -1,7 +1,7 @@
 Hubot Help Plugin
 ==================
 
-![Build Status](https://github.com/hubotio/hubot-help/actions/workflows/release.yml/badge.svg)
+![Build Status](https://github.com/hubotio/hubot-help/actions/workflows/pipeline.yml/badge.svg)
 
 A hubot script to show available hubot commands
 
