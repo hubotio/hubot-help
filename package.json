@@ -9,7 +9,7 @@
     "hubot-scripts"
   ],
   "engines": {
-    "node": "> 18"
+    "node": ">= 18"
   },
   "repository": {
     "type": "git",
