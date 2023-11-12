@@ -29,7 +29,7 @@
     "src"
   ],
   "peerDependencies": {
-    "hubot": ">= 9"
+    "hubot": ">= 9 || 0.0.0-development"
   },
   "devDependencies": {
     "standard": "^17.1.0"
